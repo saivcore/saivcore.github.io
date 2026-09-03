@@ -443,6 +443,94 @@
             border-color: var(--accent);
         }
 
+        /* ===== FOUNDER SECTION ===== */
+        .founder-section {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            border: var(--border);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: var(--shadow);
+            margin-bottom: 14px;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .founder-section:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .founder-section .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            color: #fff;
+            flex-shrink: 0;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 184, 148, 0.15);
+            transition: all var(--transition);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        .founder-section .avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .founder-section .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .founder-section .info {
+            flex: 1;
+        }
+
+        .founder-section .info .tag {
+            font-size: 0.55rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--accent);
+            display: inline-block;
+            margin-bottom: 2px;
+        }
+
+        .founder-section .info h2 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            margin-bottom: 2px;
+        }
+
+        .founder-section .info h2 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .founder-section .info .title {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .founder-section .info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
         /* ===== CARDS ===== */
         .card {
             background: var(--bg-card);
@@ -495,6 +583,46 @@
             color: var(--text-secondary);
             font-size: 0.9rem;
             margin-bottom: 6px;
+        }
+
+        /* ===== JOIN TEAM ===== */
+        .join-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px 24px;
+            border: 2px solid var(--accent);
+            transition: all var(--transition);
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        .join-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .join-card .icon {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .join-card h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .join-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .join-card .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
         }
 
         /* ===== SERVICES GRID ===== */
@@ -666,6 +794,63 @@
             color: var(--accent);
         }
 
+        /* ===== SOCIAL ===== */
+        .social-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            justify-content: center;
+        }
+
+        .s-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: var(--border);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            font-weight: 700;
+            transition: all var(--transition);
+            background: var(--bg-card);
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            text-decoration: none;
+        }
+
+        .s-btn i {
+            font-size: 0.85rem;
+        }
+
+        .s-btn:hover {
+            transform: translateY(-3px);
+            color: #fff;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .s-btn.whatsapp:hover {
+            background: #25D366;
+            border-color: #25D366;
+        }
+        .s-btn.facebook:hover {
+            background: #1877F2;
+            border-color: #1877F2;
+        }
+        .s-btn.instagram:hover {
+            background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            border-color: #dc2743;
+        }
+        .s-btn.youtube:hover {
+            background: #FF0000;
+            border-color: #FF0000;
+        }
+        .s-btn.tiktok:hover {
+            background: #000000;
+            border-color: #000000;
+        }
+
         /* ===== FOOTER ===== */
         .footer {
             text-align: center;
@@ -776,6 +961,22 @@
                 font-size: 1.5rem;
             }
 
+            .founder-section {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px 18px;
+            }
+
+            .founder-section .avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2.2rem;
+            }
+
+            .founder-section .info h2 {
+                font-size: 1.1rem;
+            }
+
             .services-grid {
                 grid-template-columns: 1fr 1fr;
                 gap: 10px;
@@ -802,6 +1003,15 @@
             .contact-grid {
                 grid-template-columns: 1fr 1fr;
                 gap: 8px;
+            }
+
+            .join-card {
+                padding: 16px 14px;
+            }
+
+            .join-card .btn-group {
+                flex-direction: column;
+                align-items: center;
             }
 
             .footer .links {
@@ -845,6 +1055,24 @@
                 padding: 12px 10px;
             }
 
+            .founder-section {
+                padding: 16px 14px;
+            }
+
+            .founder-section .avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+
+            .founder-section .info h2 {
+                font-size: 1rem;
+            }
+
+            .founder-section .info p {
+                font-size: 0.82rem;
+            }
+
             .service-card {
                 padding: 14px 14px;
             }
@@ -859,6 +1087,14 @@
 
             .service-card p {
                 font-size: 0.7rem;
+            }
+
+            .join-card h3 {
+                font-size: 0.95rem;
+            }
+
+            .join-card p {
+                font-size: 0.78rem;
             }
         }
     </style>
@@ -913,8 +1149,46 @@
                 </div>
             </div>
 
+            <!-- ===== FOUNDER ===== -->
+            <div class="founder-section animate-in animate-in-2">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="info">
+                    <span class="tag">✦ المؤسس</span>
+                    <h2><span>سيف الإسلام زحاف</span></h2>
+                    <div class="title">مبرمج · روائي · مؤسس SaivCORE</div>
+                    <p>
+                        مؤسس شركة SaivCORE، مبرمج جزائري شغوف ببناء السيادة الرقمية
+                        لوطنه. يجمع بين الخبرة التقنية والرؤية الأدبية، ويؤمن بأن
+                        التكنولوجيا الحقيقية هي التي تُكتب بأيدي أبناء الوطن.
+                    </p>
+                </div>
+            </div>
+
+            <!-- ===== JOIN TEAM ===== -->
+            <div class="card animate-in animate-in-3">
+                <span class="tag">✦ انضم إلينا</span>
+                <div class="join-card">
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <h3>كن جزءاً من الفريق</h3>
+                    <p>
+                        نبحث عن مبرمجين جزائريين موهوبين للانضمام إلى فريق SaivCORE.
+                        ساهم في بناء السيادة الرقمية للجزائر.
+                    </p>
+                    <div class="btn-group">
+                        <a href="https://forms.google.com/your-form-link" target="_blank" class="btn-primary">
+                            <i class="fas fa-arrow-left"></i> قدم الآن
+                        </a>
+                        <a href="contact.html" class="btn-secondary">
+                            <i class="fas fa-phone-alt"></i> اتصل بنا
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             <!-- ===== SERVICES ===== -->
-            <div class="card animate-in animate-in-2">
+            <div class="card animate-in animate-in-4">
                 <span class="tag">✦ ما نقدمه</span>
                 <h2><i class="fas fa-cogs"></i> خدماتنا</h2>
                 <p class="sub">حلول تقنية محلية بمعايير عالمية.</p>
@@ -943,7 +1217,7 @@
             </div>
 
             <!-- ===== PRODUCTS ===== -->
-            <div class="card animate-in animate-in-3">
+            <div class="card animate-in animate-in-4">
                 <span class="tag">✦ منتجاتنا</span>
                 <h2><i class="fas fa-box"></i> منتجاتنا التقنية</h2>
                 <p class="sub">ابتكارات جزائرية تعزز السيادة الرقمية.</p>
@@ -977,7 +1251,7 @@
                         <div class="ic"><i class="fas fa-envelope"></i></div>
                         <div>
                             <div class="lbl">البريد</div>
-                            <div class="val"><a href="mailto:seizhf@gmail.com">seizhf@gmail.com</a></div>
+                            <div class="val"><a href="mailto:saivcoredz@gmail.com">saivcoredz@gmail.com</a></div>
                         </div>
                     </div>
                     <div class="contact-item">
@@ -994,6 +1268,25 @@
                             <div class="val"><a href="https://github.com/SaivCORE" target="_blank">@SaivCORE</a></div>
                         </div>
                     </div>
+                </div>
+
+                <!-- ===== SOCIAL MEDIA ===== -->
+                <div class="social-grid">
+                    <a href="https://wa.me/213792390349" target="_blank" class="s-btn whatsapp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                    <a href="https://facebook.com/saivcore" target="_blank" class="s-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </a>
+                    <a href="https://instagram.com/saivcore" target="_blank" class="s-btn instagram">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a>
+                    <a href="https://youtube.com/@saivcore" target="_blank" class="s-btn youtube">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </a>
+                    <a href="https://tiktok.com/@saivcore" target="_blank" class="s-btn tiktok">
+                        <i class="fab fa-tiktok"></i> TikTok
+                    </a>
                 </div>
             </div>
 
@@ -1021,7 +1314,44 @@
                 </div>
             </div>
 
-            <div class="card animate-in animate-in-2">
+            <div class="founder-section animate-in animate-in-2">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="info">
+                    <span class="tag">✦ Founder</span>
+                    <h2><span>Saif El Islem Zahaf</span></h2>
+                    <div class="title">Developer · Novelist · Founder of SaivCORE</div>
+                    <p>
+                        Founder of SaivCORE, an Algerian programmer passionate about building
+                        digital sovereignty for his homeland. He combines technical expertise
+                        with literary vision, believing that true technology is written by
+                        the hands of the nation's own people.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-3">
+                <span class="tag">✦ Join Us</span>
+                <div class="join-card">
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <h3>Be Part of the Team</h3>
+                    <p>
+                        We are looking for talented Algerian developers to join the SaivCORE team.
+                        Contribute to building Algeria's digital sovereignty.
+                    </p>
+                    <div class="btn-group">
+                        <a href="https://forms.google.com/your-form-link" target="_blank" class="btn-primary">
+                            <i class="fas fa-arrow-right"></i> Apply Now
+                        </a>
+                        <a href="contact.html" class="btn-secondary">
+                            <i class="fas fa-phone-alt"></i> Contact Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-4">
                 <span class="tag">✦ What We Offer</span>
                 <h2><i class="fas fa-cogs"></i> Our Services</h2>
                 <p class="sub">Local tech solutions with global standards.</p>
@@ -1049,7 +1379,7 @@
                 </div>
             </div>
 
-            <div class="card animate-in animate-in-3">
+            <div class="card animate-in animate-in-4">
                 <span class="tag">✦ Our Products</span>
                 <h2><i class="fas fa-box"></i> Our Tech Products</h2>
                 <p class="sub">Algerian innovations enhancing digital sovereignty.</p>
@@ -1082,7 +1412,7 @@
                         <div class="ic"><i class="fas fa-envelope"></i></div>
                         <div>
                             <div class="lbl">Email</div>
-                            <div class="val"><a href="mailto:seizhf@gmail.com">seizhf@gmail.com</a></div>
+                            <div class="val"><a href="mailto:saivcoredz@gmail.com">saivcoredz@gmail.com</a></div>
                         </div>
                     </div>
                     <div class="contact-item">
@@ -1099,6 +1429,24 @@
                             <div class="val"><a href="https://github.com/SaivCORE" target="_blank">@SaivCORE</a></div>
                         </div>
                     </div>
+                </div>
+
+                <div class="social-grid">
+                    <a href="https://wa.me/213792390349" target="_blank" class="s-btn whatsapp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                    <a href="https://facebook.com/saivcore" target="_blank" class="s-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </a>
+                    <a href="https://instagram.com/saivcore" target="_blank" class="s-btn instagram">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a>
+                    <a href="https://youtube.com/@saivcore" target="_blank" class="s-btn youtube">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </a>
+                    <a href="https://tiktok.com/@saivcore" target="_blank" class="s-btn tiktok">
+                        <i class="fab fa-tiktok"></i> TikTok
+                    </a>
                 </div>
             </div>
 
@@ -1127,7 +1475,44 @@
                 </div>
             </div>
 
-            <div class="card animate-in animate-in-2">
+            <div class="founder-section animate-in animate-in-2">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="info">
+                    <span class="tag">✦ Fondateur</span>
+                    <h2><span>Saif El Islem Zahaf</span></h2>
+                    <div class="title">Développeur · Romancier · Fondateur de SaivCORE</div>
+                    <p>
+                        Fondateur de SaivCORE, un programmeur algérien passionné par la construction
+                        de la souveraineté numérique pour sa patrie. Il allie expertise technique
+                        et vision littéraire, croyant que la vraie technologie est écrite par
+                        les mains des propres enfants de la nation.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-3">
+                <span class="tag">✦ Rejoignez-nous</span>
+                <div class="join-card">
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <h3>Faites partie de l'équipe</h3>
+                    <p>
+                        Nous recherchons des développeurs algériens talentueux pour rejoindre l'équipe SaivCORE.
+                        Contribuez à construire la souveraineté numérique de l'Algérie.
+                    </p>
+                    <div class="btn-group">
+                        <a href="https://forms.google.com/your-form-link" target="_blank" class="btn-primary">
+                            <i class="fas fa-arrow-right"></i> Postuler
+                        </a>
+                        <a href="contact.html" class="btn-secondary">
+                            <i class="fas fa-phone-alt"></i> Contactez-nous
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-4">
                 <span class="tag">✦ Ce que nous offrons</span>
                 <h2><i class="fas fa-cogs"></i> Nos services</h2>
                 <p class="sub">Des solutions techniques locales avec des standards mondiaux.</p>
@@ -1155,7 +1540,7 @@
                 </div>
             </div>
 
-            <div class="card animate-in animate-in-3">
+            <div class="card animate-in animate-in-4">
                 <span class="tag">✦ Nos produits</span>
                 <h2><i class="fas fa-box"></i> Nos produits techniques</h2>
                 <p class="sub">Des innovations algériennes renforçant la souveraineté numérique.</p>
@@ -1188,7 +1573,7 @@
                         <div class="ic"><i class="fas fa-envelope"></i></div>
                         <div>
                             <div class="lbl">Email</div>
-                            <div class="val"><a href="mailto:seizhf@gmail.com">seizhf@gmail.com</a></div>
+                            <div class="val"><a href="mailto:saivcoredz@gmail.com">saivcoredz@gmail.com</a></div>
                         </div>
                     </div>
                     <div class="contact-item">
@@ -1205,6 +1590,24 @@
                             <div class="val"><a href="https://github.com/SaivCORE" target="_blank">@SaivCORE</a></div>
                         </div>
                     </div>
+                </div>
+
+                <div class="social-grid">
+                    <a href="https://wa.me/213792390349" target="_blank" class="s-btn whatsapp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                    <a href="https://facebook.com/saivcore" target="_blank" class="s-btn facebook">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </a>
+                    <a href="https://instagram.com/saivcore" target="_blank" class="s-btn instagram">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a>
+                    <a href="https://youtube.com/@saivcore" target="_blank" class="s-btn youtube">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </a>
+                    <a href="https://tiktok.com/@saivcore" target="_blank" class="s-btn tiktok">
+                        <i class="fab fa-tiktok"></i> TikTok
+                    </a>
                 </div>
             </div>
 
