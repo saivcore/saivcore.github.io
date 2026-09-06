@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SaivTUBE - تطبيق تحميل فيديوهات YouTube</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        /* ============================================================
+           SAME STYLE AS SaivCORE
+           ============================================================ */
+        :root {
+            --bg-body: #f0f4f8;
+            --bg-card: rgba(255, 255, 255, 0.70);
+            --bg-header: rgba(255, 255, 255, 0.80);
+            --bg-nav: rgba(255, 255, 255, 0.50);
+            --text-primary: #0a1628;
+            --text-secondary: #1a3a6a;
+            --text-muted: #5a6a7a;
+            --accent: #00b894;
+            --accent-light: #00d9a5;
+            --accent-dark: #00856a;
+            --accent-gradient: linear-gradient(135deg, #00b894, #00d9a5);
+            --shadow: 0 2px 20px rgba(0, 184, 148, 0.06);
+            --shadow-hover: 0 6px 30px rgba(0, 184, 148, 0.12);
+            --border: 1px solid rgba(0, 184, 148, 0.06);
+            --radius: 14px;
+            --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        body.dark {
+            --bg-body: #0a1628;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-header: rgba(255, 255, 255, 0.03);
+            --bg-nav: rgba(255, 255, 255, 0.03);
+            --text-primary: #e8eef2;
+            --text-secondary: #b0c8d8;
+            --text-muted: #708090;
+            --shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 6px 30px rgba(0, 0, 0, 0.5);
+            --border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 14px 16px 12px;
+            transition: background 0.5s ease, color 0.5s ease;
+            line-height: 1.7;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .animate-in {
+            animation: fadeSlide 0.5s ease both;
+        }
+        .animate-in-1 {
+            animation-delay: 0.05s;
+        }
+        .animate-in-2 {
+            animation-delay: 0.10s;
+        }
+        .animate-in-3 {
+            animation-delay: 0.15s;
+        }
+        .animate-in-4 {
+            animation-delay: 0.20s;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 18px;
+            background: var(--bg-header);
+            border-radius: var(--radius);
+            border: var(--border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+            animation: fadeSlide 0.5s ease;
+        }
+
+        .header:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 900;
+        }
+
+        .logo .icon {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .logo .name {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo .badge {
+            font-size: 0.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 1px 8px;
+            border-radius: 20px;
+            background: rgba(0, 184, 148, 0.04);
+        }
+
+        body.dark .logo .badge {
+            background: rgba(0, 184, 148, 0.06);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            transition: all var(--transition);
+        }
+
+        .lang-btn:hover {
+            color: var(--text-primary);
+            background: rgba(0, 184, 148, 0.04);
+        }
+
+        body.dark .lang-btn:hover {
+            background: rgba(0, 184, 148, 0.06);
+        }
+
+        .lang-btn.active {
+            color: #fff;
+            background: var(--accent-gradient);
+            box-shadow: 0 2px 12px rgba(0, 184, 148, 0.15);
+        }
+
+        body.dark .lang-btn.active {
+            box-shadow: 0 2px 12px rgba(0, 184, 148, 0.15);
+        }
+
+        .theme-btn {
+            background: transparent;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .theme-btn:hover {
+            color: var(--accent);
+            transform: rotate(20deg);
+        }
+
+        /* ===== NAV ===== */
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            margin-bottom: 16px;
+            padding: 4px 6px;
+            background: var(--bg-nav);
+            border-radius: var(--radius);
+            border: var(--border);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            justify-content: center;
+            transition: all var(--transition);
+            animation: fadeSlide 0.5s ease 0.05s both;
+        }
+
+        .nav a {
+            padding: 6px 18px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+            transition: width var(--transition);
+        }
+
+        .nav a:hover::after {
+            width: 60%;
+        }
+
+        .nav a i {
+            font-size: 0.7rem;
+            opacity: 0.4;
+            transition: opacity var(--transition);
+        }
+
+        .nav a:hover {
+            color: var(--text-primary);
+            background: rgba(0, 184, 148, 0.04);
+        }
+
+        body.dark .nav a:hover {
+            background: rgba(0, 184, 148, 0.06);
+        }
+
+        .nav a.active {
+            color: #fff;
+            background: var(--accent-gradient);
+            box-shadow: 0 2px 16px rgba(0, 184, 148, 0.15);
+        }
+
+        body.dark .nav a.active {
+            box-shadow: 0 2px 16px rgba(0, 184, 148, 0.15);
+        }
+
+        .nav a.active::after {
+            width: 0;
+        }
+
+        .nav a.active i {
+            opacity: 1;
+        }
+
+        /* ===== LANG SECTIONS ===== */
+        .lang-section {
+            display: none;
+            animation: fadeSlide 0.5s ease;
+        }
+
+        .lang-section.active {
+            display: block;
+        }
+
+        .lang-section[dir="ltr"] {
+            direction: ltr;
+            text-align: left;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            border: var(--border);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: var(--shadow);
+            margin-bottom: 14px;
+            transition: all var(--transition);
+            text-align: center;
+        }
+
+        .hero:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .hero .tag {
+            font-size: 0.55rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--accent);
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .hero h1 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .sub {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .hero .desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* ===== APP ICON ===== */
+        .app-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--accent-gradient);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: #fff;
+            margin: 0 auto 14px;
+            box-shadow: 0 8px 40px rgba(0, 184, 148, 0.2);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .app-icon:hover {
+            transform: scale(1.05);
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 14px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 28px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #fff;
+            background: var(--accent-gradient);
+            border: none;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            transition: all var(--transition);
+            box-shadow: 0 2px 16px rgba(0, 184, 148, 0.15);
+        }
+
+        body.dark .btn-primary {
+            box-shadow: 0 2px 16px rgba(0, 184, 148, 0.15);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(0, 184, 148, 0.25);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 28px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: var(--bg-card);
+            border: var(--border);
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            transition: all var(--transition);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all var(--transition);
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .btn-back:hover {
+            color: var(--accent);
+            gap: 10px;
+        }
+
+        .btn-back i {
+            font-size: 0.65rem;
+            transition: transform var(--transition);
+        }
+
+        .btn-back:hover i {
+            transform: translateX(-4px);
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 14px;
+            border: var(--border);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .card .tag {
+            font-size: 0.55rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--accent);
+            display: inline-block;
+            margin-bottom: 2px;
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            font-weight: 900;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card h2 i {
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        .card .sub {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        /* ===== FEATURES ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        .feature-item {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px 18px;
+            border: var(--border);
+            transition: all var(--transition);
+            text-align: center;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .feature-item .icon {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .feature-item h4 {
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .feature-item p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== SCREENSHOTS ===== */
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        .screenshot {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            border: var(--border);
+            text-align: center;
+            transition: all var(--transition);
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .screenshot:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .screenshot .icon {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .screenshot .label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        /* ===== REQUIREMENTS ===== */
+        .req-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .req-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: var(--border);
+            transition: all var(--transition);
+        }
+
+        .req-item:hover {
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .req-item .ic {
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .req-item .info .lbl {
+            font-size: 0.5rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .req-item .info .val {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 14px 0 4px;
+            margin-top: 18px;
+            border-top: var(--border);
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            transition: all var(--transition);
+        }
+
+        .footer .links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .footer .links a {
+            font-size: 0.65rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+            transition: color var(--transition);
+        }
+
+        .footer .links a:hover {
+            color: var(--accent);
+        }
+
+        .footer .heart {
+            color: #d21034;
+            display: inline-block;
+            animation: pulseHeart 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulseHeart {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+        .footer .flag {
+            display: inline-block;
+            margin: 0 2px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px 12px 10px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+                gap: 6px;
+                padding: 10px 14px;
+            }
+
+            .logo {
+                justify-content: center;
+                font-size: 0.9rem;
+            }
+
+            .header-actions {
+                justify-content: center;
+            }
+
+            .lang-btn {
+                font-size: 0.6rem;
+                padding: 3px 10px;
+            }
+
+            .theme-btn {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+
+            .nav {
+                justify-content: center;
+                padding: 4px;
+                gap: 2px;
+            }
+
+            .nav a {
+                font-size: 0.65rem;
+                padding: 4px 12px;
+                gap: 4px;
+            }
+
+            .nav a i {
+                font-size: 0.6rem;
+            }
+
+            .hero {
+                padding: 24px 18px;
+            }
+
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .app-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2.8rem;
+            }
+
+            .card {
+                padding: 16px 14px;
+            }
+
+            .card h2 {
+                font-size: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .screenshots-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .req-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .footer .links {
+                gap: 6px;
+            }
+
+            .footer .links a {
+                font-size: 0.55rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .screenshots-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .req-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav a {
+                font-size: 0.55rem;
+                padding: 3px 8px;
+            }
+
+            .hero h1 {
+                font-size: 1.2rem;
+            }
+
+            .hero .desc {
+                font-size: 0.85rem;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                font-size: 0.7rem;
+                padding: 8px 18px;
+            }
+
+            .card {
+                padding: 12px 10px;
+            }
+
+            .app-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ===== HEADER ===== -->
+        <header class="header">
+            <div class="logo">
+                <div class="icon"><i class="fas fa-code"></i></div>
+                <span class="name">SaivCORE</span>
+                <span class="badge">🇩🇿</span>
+            </div>
+            <div class="header-actions">
+                <button class="lang-btn active" data-lang="ar">عربي</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="fr">FR</button>
+                <button class="theme-btn" id="themeBtn"><i class="fas fa-moon"></i></button>
+            </div>
+        </header>
+
+        <!-- ===== NAV ===== -->
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-home"></i> <span data-i18n="home">الرئيسية</span></a>
+            <a href="about.html"><i class="fas fa-info-circle"></i> <span data-i18n="about">عن الشركة</span></a>
+            <a href="services.html"><i class="fas fa-cogs"></i> <span data-i18n="services">الخدمات</span></a>
+            <a href="products.html"><i class="fas fa-box"></i> <span data-i18n="products">المنتجات</span></a>
+            <a href="contact.html"><i class="fas fa-envelope"></i> <span data-i18n="contact">التواصل</span></a>
+            <a href="https://seizhf.github.io" target="_blank"><i class="fas fa-user"></i> المؤسس</a>
+        </nav>
+
+        <!-- ============================================================
+        ARABIC
+        ============================================================ -->
+        <div class="lang-section active" id="lang-ar" dir="rtl">
+
+            <!-- ===== BACK BUTTON ===== -->
+            <a href="products.html" class="btn-back animate-in animate-in-1">
+                <i class="fas fa-arrow-right"></i> <span data-i18n="back">العودة إلى المنتجات</span>
+            </a>
+
+            <!-- ===== HERO ===== -->
+            <div class="hero animate-in animate-in-1">
+                <div class="app-icon"><i class="fas fa-video"></i></div>
+                <span class="tag">✦ تطبيق جزائري</span>
+                <h1><span>SaivTUBE</span></h1>
+                <p class="sub">تحميل فيديوهات YouTube بجودة عالية وسرعة فائقة</p>
+                <p class="desc">
+                    SaivTUBE هو تطبيق سطح مكتب احترافي مصمم بلغة <strong>C#</strong> و <strong>.NET WPF</strong>،
+                    يتيح لك تحميل فيديوهات YouTube بجودة تصل إلى <strong>4K</strong> وبسرعات فائقة.
+                    التطبيق يدعم تحميل المقاطع كاملة، أو الصوت فقط، مع واجهة بسيطة وسهلة الاستخدام.
+                </p>
+                <div class="btn-group">
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> تحميل التطبيق</a>
+                    <a href="#" class="btn-secondary"><i class="fas fa-key"></i> طلب رمز التفعيل</a>
+                </div>
+            </div>
+
+            <!-- ===== FEATURES ===== -->
+            <div class="card animate-in animate-in-2">
+                <span class="tag">✦ المميزات</span>
+                <h2><i class="fas fa-star"></i> مميزات التطبيق</h2>
+                <p class="sub">ما يجعله الخيار الأمثل.</p>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-4k"></i></div>
+                        <h4>جودة عالية</h4>
+                        <p>تحميل فيديوهات بجودة تصل إلى 4K.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-bolt"></i></div>
+                        <h4>سرعة فائقة</h4>
+                        <p>تحميل متعدد الخيوط بسرعات استثنائية.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-music"></i></div>
+                        <h4>تحميل الصوت فقط</h4>
+                        <p>استخراج الصوت بصيغة MP3 بجودة عالية.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-list"></i></div>
+                        <h4>تحميل قوائم التشغيل</h4>
+                        <p>تحميل قوائم تشغيل كاملة دفعة واحدة.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-window-maximize"></i></div>
+                        <h4>واجهة بسيطة</h4>
+                        <p>تصميم سهل الاستخدام يناسب الجميع.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-shield-alt"></i></div>
+                        <h4>آمن ومجاني</h4>
+                        <p>خالٍ من الفيروسات والبرامج الضارة.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SCREENSHOTS ===== -->
+            <div class="card animate-in animate-in-3">
+                <span class="tag">✦ المعاينة</span>
+                <h2><i class="fas fa-images"></i> معاينة التطبيق</h2>
+                <p class="sub">شكل واجهة التطبيق.</p>
+                <div class="screenshots-grid">
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-home"></i></div>
+                        <div class="label">الواجهة الرئيسية</div>
+                    </div>
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-search"></i></div>
+                        <div class="label">البحث عن الفيديو</div>
+                    </div>
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-download"></i></div>
+                        <div class="label">شاشة التحميل</div>
+                    </div>
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-cog"></i></div>
+                        <div class="label">الإعدادات</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== REQUIREMENTS ===== -->
+            <div class="card animate-in animate-in-4">
+                <span class="tag">✦ المتطلبات</span>
+                <h2><i class="fas fa-laptop"></i> متطلبات النظام</h2>
+                <p class="sub">لتشغيل التطبيق بسلاسة.</p>
+                <div class="req-grid">
+                    <div class="req-item">
+                        <div class="ic"><i class="fab fa-windows"></i></div>
+                        <div class="info">
+                            <div class="lbl">نظام التشغيل</div>
+                            <div class="val">Windows 10/11</div>
+                        </div>
+                    </div>
+                    <div class="req-item">
+                        <div class="ic"><i class="fas fa-microchip"></i></div>
+                        <div class="info">
+                            <div class="lbl">المعالج</div>
+                            <div class="val">Intel Core i3 أو أعلى</div>
+                        </div>
+                    </div>
+                    <div class="req-item">
+                        <div class="ic"><i class="fas fa-memory"></i></div>
+                        <div class="info">
+                            <div class="lbl">الذاكرة</div>
+                            <div class="val">4GB RAM</div>
+                        </div>
+                    </div>
+                    <div class="req-item">
+                        <div class="ic"><i class="fas fa-hdd"></i></div>
+                        <div class="info">
+                            <div class="lbl">المساحة</div>
+                            <div class="val">200MB مساحة فارغة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== DOWNLOAD ===== -->
+            <div class="card animate-in animate-in-4">
+                <span class="tag">✦ التحميل</span>
+                <h2><i class="fas fa-download"></i> حمل التطبيق الآن</h2>
+                <p class="sub">ابدأ في تحميل فيديوهات YouTube بكل سهولة.</p>
+                <div class="btn-group">
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> تحميل SaivTUBE</a>
+                    <a href="#" class="btn-secondary"><i class="fas fa-key"></i> طلب رمز التفعيل</a>
+                    <a href="contact.html" class="btn-secondary"><i class="fas fa-question-circle"></i> الدعم الفني</a>
+                </div>
+                <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:8px;">
+                    <i class="fas fa-check-circle" style="color:var(--accent);"></i>
+                    تطبيق جزائري 100% - صنع في وهران 🇩🇿
+                </p>
+            </div>
+
+        </div>
+        <!-- ===== نهاية العربي ===== -->
+
+
+        <!-- ============================================================
+        ENGLISH
+        ============================================================ -->
+        <div class="lang-section" id="lang-en" dir="ltr">
+
+            <a href="products.html" class="btn-back animate-in animate-in-1">
+                <i class="fas fa-arrow-left"></i> <span data-i18n="back">Back to Products</span>
+            </a>
+
+            <div class="hero animate-in animate-in-1">
+                <div class="app-icon"><i class="fas fa-video"></i></div>
+                <span class="tag">✦ Algerian App</span>
+                <h1><span>SaivTUBE</span></h1>
+                <p class="sub">Download YouTube videos in high quality and fast speed</p>
+                <p class="desc">
+                    SaivTUBE is a professional desktop application built with <strong>C#</strong> and <strong>.NET WPF</strong>,
+                    allowing you to download YouTube videos in quality up to <strong>4K</strong> at ultra-fast speeds.
+                    The app supports downloading full videos, or audio only, with a simple and user-friendly interface.
+                </p>
+                <div class="btn-group">
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Download App</a>
+                    <a href="#" class="btn-secondary"><i class="fas fa-key"></i> Request Activation Key</a>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-2">
+                <span class="tag">✦ Features</span>
+                <h2><i class="fas fa-star"></i> App Features</h2>
+                <p class="sub">What makes it the best choice.</p>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-4k"></i></div>
+                        <h4>High Quality</h4>
+                        <p>Download videos in up to 4K quality.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-bolt"></i></div>
+                        <h4>Ultra Fast</h4>
+                        <p>Multi-thread downloading at exceptional speeds.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-music"></i></div>
+                        <h4>Audio Only</h4>
+                        <p>Extract audio in MP3 format with high quality.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-list"></i></div>
+                        <h4>Playlists</h4>
+                        <p>Download entire playlists in one go.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-window-maximize"></i></div>
+                        <h4>Simple UI</h4>
+                        <p>User-friendly interface for everyone.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-shield-alt"></i></div>
+                        <h4>Safe & Free</h4>
+                        <p>Free of viruses and malware.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-3">
+                <span class="tag">✦ Preview</span>
+                <h2><i class="fas fa-images"></i> App Preview</h2>
+                <p class="sub">Screenshots of the interface.</p>
+                <div class="screenshots-grid">
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-home"></i></div>
+                        <div class="label">Main Interface</div>
+                    </div>
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-search"></i></div>
+                        <div class="label">Search Video</div>
+                    </div>
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-download"></i></div>
+                        <div class="label">Download Screen</div>
+                    </div>
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-cog"></i></div>
+                        <div class="label">Settings</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-4">
+                <span class="tag">✦ Requirements</span>
+                <h2><i class="fas fa-laptop"></i> System Requirements</h2>
+                <p class="sub">For smooth app performance.</p>
+                <div class="req-grid">
+                    <div class="req-item">
+                        <div class="ic"><i class="fab fa-windows"></i></div>
+                        <div class="info">
+                            <div class="lbl">OS</div>
+                            <div class="val">Windows 10/11</div>
+                        </div>
+                    </div>
+                    <div class="req-item">
+                        <div class="ic"><i class="fas fa-microchip"></i></div>
+                        <div class="info">
+                            <div class="lbl">Processor</div>
+                            <div class="val">Intel Core i3 or higher</div>
+                        </div>
+                    </div>
+                    <div class="req-item">
+                        <div class="ic"><i class="fas fa-memory"></i></div>
+                        <div class="info">
+                            <div class="lbl">RAM</div>
+                            <div class="val">4GB RAM</div>
+                        </div>
+                    </div>
+                    <div class="req-item">
+                        <div class="ic"><i class="fas fa-hdd"></i></div>
+                        <div class="info">
+                            <div class="lbl">Storage</div>
+                            <div class="val">200MB free space</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-4">
+                <span class="tag">✦ Download</span>
+                <h2><i class="fas fa-download"></i> Download Now</h2>
+                <p class="sub">Start downloading YouTube videos with ease.</p>
+                <div class="btn-group">
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Download SaivTUBE</a>
+                    <a href="#" class="btn-secondary"><i class="fas fa-key"></i> Request Activation Key</a>
+                    <a href="contact.html" class="btn-secondary"><i class="fas fa-question-circle"></i> Support</a>
+                </div>
+                <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:8px;">
+                    <i class="fas fa-check-circle" style="color:var(--accent);"></i>
+                    100% Algerian app - Made in Oran 🇩🇿
+                </p>
+            </div>
+
+        </div>
+        <!-- ===== نهاية الإنجليزي ===== -->
+
+
+        <!-- ============================================================
+        FRENCH
+        ============================================================ -->
+        <div class="lang-section" id="lang-fr" dir="ltr">
+
+            <a href="products.html" class="btn-back animate-in animate-in-1">
+                <i class="fas fa-arrow-left"></i> <span data-i18n="back">Retour aux produits</span>
+            </a>
+
+            <div class="hero animate-in animate-in-1">
+                <div class="app-icon"><i class="fas fa-video"></i></div>
+                <span class="tag">✦ Application algérienne</span>
+                <h1><span>SaivTUBE</span></h1>
+                <p class="sub">Téléchargez des vidéos YouTube en haute qualité et rapidité</p>
+                <p class="desc">
+                    SaivTUBE est une application bureau professionnelle développée en <strong>C#</strong> et <strong>.NET WPF</strong>,
+                    vous permettant de télécharger des vidéos YouTube en qualité jusqu'à <strong>4K</strong> à des vitesses ultra-rapides.
+                    L'application prend en charge le téléchargement de vidéos complètes ou uniquement l'audio,
+                    avec une interface simple et conviviale.
+                </p>
+                <div class="btn-group">
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Télécharger</a>
+                    <a href="#" class="btn-secondary"><i class="fas fa-key"></i> Demander une clé</a>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-2">
+                <span class="tag">✦ Fonctionnalités</span>
+                <h2><i class="fas fa-star"></i> Fonctionnalités</h2>
+                <p class="sub">Ce qui en fait le meilleur choix.</p>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-4k"></i></div>
+                        <h4>Haute qualité</h4>
+                        <p>Téléchargement jusqu'en 4K.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-bolt"></i></div>
+                        <h4>Ultra rapide</h4>
+                        <p>Téléchargement multi-threads à grande vitesse.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-music"></i></div>
+                        <h4>Audio uniquement</h4>
+                        <p>Extraction audio en MP3 haute qualité.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-list"></i></div>
+                        <h4>Listes de lecture</h4>
+                        <p>Téléchargement de listes complètes.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-window-maximize"></i></div>
+                        <h4>Interface simple</h4>
+                        <p>Facile à utiliser pour tous.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon"><i class="fas fa-shield-alt"></i></div>
+                        <h4>Sûr et gratuit</h4>
+                        <p>Sans virus ni logiciels malveillants.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-3">
+                <span class="tag">✦ Aperçu</span>
+                <h2><i class="fas fa-images"></i> Aperçu de l'application</h2>
+                <p class="sub">Captures d'écran de l'interface.</p>
+                <div class="screenshots-grid">
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-home"></i></div>
+                        <div class="label">Interface principale</div>
+                    </div>
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-search"></i></div>
+                        <div class="label">Recherche</div>
+                    </div>
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-download"></i></div>
+                        <div class="label">Téléchargement</div>
+                    </div>
+                    <div class="screenshot">
+                        <div class="icon"><i class="fas fa-cog"></i></div>
+                        <div class="label">Paramètres</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-4">
+                <span class="tag">✦ Configuration</span>
+                <h2><i class="fas fa-laptop"></i> Configuration système</h2>
+                <p class="sub">Pour une utilisation optimale.</p>
+                <div class="req-grid">
+                    <div class="req-item">
+                        <div class="ic"><i class="fab fa-windows"></i></div>
+                        <div class="info">
+                            <div class="lbl">OS</div>
+                            <div class="val">Windows 10/11</div>
+                        </div>
+                    </div>
+                    <div class="req-item">
+                        <div class="ic"><i class="fas fa-microchip"></i></div>
+                        <div class="info">
+                            <div class="lbl">Processeur</div>
+                            <div class="val">Intel Core i3 ou supérieur</div>
+                        </div>
+                    </div>
+                    <div class="req-item">
+                        <div class="ic"><i class="fas fa-memory"></i></div>
+                        <div class="info">
+                            <div class="lbl">RAM</div>
+                            <div class="val">4GB RAM</div>
+                        </div>
+                    </div>
+                    <div class="req-item">
+                        <div class="ic"><i class="fas fa-hdd"></i></div>
+                        <div class="info">
+                            <div class="lbl">Espace</div>
+                            <div class="val">200MB d'espace libre</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card animate-in animate-in-4">
+                <span class="tag">✦ Téléchargement</span>
+                <h2><i class="fas fa-download"></i> Télécharger maintenant</h2>
+                <p class="sub">Commencez à télécharger des vidéos YouTube facilement.</p>
+                <div class="btn-group">
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Télécharger SaivTUBE</a>
+                    <a href="#" class="btn-secondary"><i class="fas fa-key"></i> Demander une clé</a>
+                    <a href="contact.html" class="btn-secondary"><i class="fas fa-question-circle"></i> Support</a>
+                </div>
+                <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:8px;">
+                    <i class="fas fa-check-circle" style="color:var(--accent);"></i>
+                    Application 100% algérienne - Fabriqué à Oran 🇩🇿
+                </p>
+            </div>
+
+        </div>
+        <!-- ===== نهاية الفرنسي ===== -->
+
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer">
+            <div class="links">
+                <a href="index.html"><i class="fas fa-home"></i> <span data-i18n="footer-home">الرئيسية</span></a>
+                <a href="about.html"><i class="fas fa-info-circle"></i> <span data-i18n="footer-about">عن الشركة</span></a>
+                <a href="services.html"><i class="fas fa-cogs"></i> <span data-i18n="footer-services">الخدمات</span></a>
+                <a href="products.html"><i class="fas fa-box"></i> <span data-i18n="footer-products">المنتجات</span></a>
+                <a href="contact.html"><i class="fas fa-envelope"></i> <span data-i18n="footer-contact">التواصل</span></a>
+                <a href="https://seizhf.github.io" target="_blank"><i class="fas fa-user"></i> المؤسس</a>
+            </div>
+            <p>
+                <i class="fas fa-code"></i>
+                <span data-i18n="footer-made">صُنع بـ</span>
+                <i class="fas fa-heart heart"></i>
+                <span data-i18n="footer-by">بواسطة</span>
+                <strong>SaivCORE</strong>
+                <span class="flag">🇩🇿</span>
+                · 2025
+            </p>
+            <p style="font-size:0.6rem;color:var(--text-muted);margin-top:2px;">
+                <span data-i18n="footer-slogan">نبني السيادة الرقمية بأكواد جزائرية</span>
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        (function() {
+
+            const langBtns = document.querySelectorAll('.lang-btn');
+            const langSections = {
+                ar: document.getElementById('lang-ar'),
+                en: document.getElementById('lang-en'),
+                fr: document.getElementById('lang-fr')
+            };
+            const themeBtn = document.getElementById('themeBtn');
+            const body = document.body;
+
+            const t = {
+                ar: {
+                    home: 'الرئيسية',
+                    about: 'عن الشركة',
+                    services: 'الخدمات',
+                    products: 'المنتجات',
+                    contact: 'التواصل',
+                    'footer-home': 'الرئيسية',
+                    'footer-about': 'عن الشركة',
+                    'footer-services': 'الخدمات',
+                    'footer-products': 'المنتجات',
+                    'footer-contact': 'التواصل',
+                    'footer-made': 'صُنع بـ',
+                    'footer-by': 'بواسطة',
+                    'footer-slogan': 'نبني السيادة الرقمية بأكواد جزائرية',
+                    back: 'العودة إلى المنتجات'
+                },
+                en: {
+                    home: 'Home',
+                    about: 'About',
+                    services: 'Services',
+                    products: 'Products',
+                    contact: 'Contact',
+                    'footer-home': 'Home',
+                    'footer-about': 'About',
+                    'footer-services': 'Services',
+                    'footer-products': 'Products',
+                    'footer-contact': 'Contact',
+                    'footer-made': 'Made with',
+                    'footer-by': 'by',
+                    'footer-slogan': 'Building digital sovereignty with Algerian code',
+                    back: 'Back to Products'
+                },
+                fr: {
+                    home: 'Accueil',
+                    about: 'À propos',
+                    services: 'Services',
+                    products: 'Produits',
+                    contact: 'Contact',
+                    'footer-home': 'Accueil',
+                    'footer-about': 'À propos',
+                    'footer-services': 'Services',
+                    'footer-products': 'Produits',
+                    'footer-contact': 'Contact',
+                    'footer-made': 'Fait avec',
+                    'footer-by': 'par',
+                    'footer-slogan': 'Construire la souveraineté numérique avec du code algérien',
+                    back: 'Retour aux produits'
+                }
+            };
+
+            function applyTranslation(lang) {
+                const data = t[lang];
+                if (!data) return;
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (data[key]) el.textContent = data[key];
+                });
+            }
+
+            function switchLanguage(lang) {
+                langBtns.forEach(btn => btn.classList.remove('active'));
+                langBtns.forEach(btn => {
+                    if (btn.dataset.lang === lang) btn.classList.add('active');
+                });
+                Object.keys(langSections).forEach(key => {
+                    langSections[key].classList.toggle('active', key === lang);
+                });
+                applyTranslation(lang);
+                localStorage.setItem('lang', lang);
+            }
+
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    switchLanguage(this.dataset.lang);
+                });
+            });
+
+            const savedLang = localStorage.getItem('lang');
+            if (savedLang && langSections[savedLang]) {
+                switchLanguage(savedLang);
+            } else {
+                applyTranslation('ar');
+            }
+
+            function toggleTheme() {
+                body.classList.toggle('dark');
+                const isDark = body.classList.contains('dark');
+                themeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            }
+
+            themeBtn.addEventListener('click', toggleTheme);
+
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark');
+                themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+
+            if (!localStorage.getItem('theme')) {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    body.classList.add('dark');
+                    themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                }
+            }
+
+        })();
+    </script>
+
+</body>
+</html>
