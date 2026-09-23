@@ -3,67 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaivCORE | طلب خدمة - Demande de Service - Service Request</title>
-    <meta name="description" content="SaivCORE - Enterprise Tech Solutions & Services in Algeria">
-    <meta name="theme-color" content="#090d16">
-    
-    <!-- Google Fonts: Tajawal for Arabic, Plus Jakarta Sans for EN/FR -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cyber: {
-                            bg: '#090d16',
-                            card: 'rgba(18, 26, 43, 0.78)',
-                            border: 'rgba(0, 242, 254, 0.22)',
-                            cyan: '#00f2fe',
-                            green: '#00e676',
-                            purple: '#7928ca',
-                            accent: '#3b82f6'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Tajawal', 'Plus Jakarta Sans', 'sans-serif'],
-                        en: ['Plus Jakarta Sans', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <title>SaivCORE | Demande de Service - طلب خدمة</title>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(18, 26, 43, 0.75);
+            --border-color: rgba(0, 242, 254, 0.2);
+            --primary-cyan: #00f2fe;
+            --secondary-blue: #4facfe;
+            --accent-green: #00e676;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --accent-glow: rgba(0, 242, 254, 0.25);
+        }
+
         * {
             box-sizing: border-box;
-            scroll-behavior: smooth;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #090d16;
-            color: #f3f4f6;
-            font-family: 'Tajawal', 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 30px 15px;
             overflow-x: hidden;
         }
 
-        /* Ambient glowing background grid */
-        .cyber-grid {
-            background-size: 40px 40px;
-            background-image: 
-                linear-gradient(to right, rgba(0, 242, 254, 0.03) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
-        }
-
-        #bg-canvas {
+        canvas#particleCanvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -73,652 +51,717 @@
             pointer-events: none;
         }
 
-        .glass-card {
-            background: rgba(18, 26, 43, 0.82);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(0, 242, 254, 0.2);
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 242, 254, 0.04);
+        .container {
+            width: 100%;
+            max-width: 620px;
+            z-index: 10;
+            position: relative;
         }
 
-        .input-cyber {
-            background: rgba(9, 13, 22, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #ffffff;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .input-cyber:focus {
-            border-color: #00f2fe;
-            box-shadow: 0 0 18px rgba(0, 242, 254, 0.35);
-            outline: none;
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, #ffffff 10%, #00f2fe 60%, #00e676 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .btn-glow {
-            background: linear-gradient(135deg, #00f2fe 0%, #00e676 100%);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-glow:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(0, 242, 254, 0.55);
+        /* Language Switcher Toolbar */
+        .lang-toolbar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(18, 26, 43, 0.8);
+            padding: 8px 12px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .lang-btn {
-            transition: all 0.25s ease;
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            transition: all 0.3s ease;
         }
 
         .lang-btn.active {
-            background: rgba(0, 242, 254, 0.2);
-            border-color: #00f2fe;
-            color: #00f2fe;
-            box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
+            background: var(--primary-cyan);
+            color: #0b0f19;
+            box-shadow: 0 0 12px var(--accent-glow);
         }
 
-        /* Spinner animation */
-        .spinner {
-            border: 3px solid rgba(255,255,255,0.15);
+        /* Main Form Card */
+        .form-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 35px 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 0 20px var(--accent-glow);
+        }
+
+        .header-box {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-img {
+            width: 85px;
+            height: 85px;
             border-radius: 50%;
-            border-top: 3px solid #00f2fe;
-            width: 22px;
-            height: 22px;
+            object-fit: cover;
+            border: 2px solid var(--primary-cyan);
+            box-shadow: 0 0 20px var(--accent-glow);
+            margin-bottom: 12px;
+        }
+
+        .title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 30%, var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--accent-green);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            border: 1px solid rgba(0, 230, 118, 0.3);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            color: var(--primary-cyan);
+            font-size: 1.1rem;
+            z-index: 2;
+        }
+
+        html[dir="rtl"] .input-icon { right: 14px; }
+        html[dir="ltr"] .input-icon { left: 14px; }
+
+        .form-control {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        html[dir="rtl"] .form-control { padding-right: 44px; }
+        html[dir="ltr"] .form-control { padding-left: 44px; }
+
+        .form-control:focus {
+            border-color: var(--primary-cyan);
+            background: rgba(0, 242, 254, 0.05);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        select.form-control {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        select.form-control option {
+            background-color: #111827;
+            color: #ffffff;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+            padding-top: 12px;
+        }
+
+        html[dir="rtl"] textarea.form-control { padding-right: 44px; }
+        html[dir="ltr"] textarea.form-control { padding-left: 44px; }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-cyan), var(--secondary-blue));
+            border: none;
+            border-radius: 14px;
+            color: #0b0f19;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.3);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 242, 254, 0.45);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            direction: ltr;
+        }
+
+        /* Modal Alerts */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-card {
+            background: #111827;
+            border: 1px solid var(--primary-cyan);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        .modal-icon {
+            font-size: 3rem;
+            color: var(--primary-cyan);
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .modal-desc {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-btn {
+            background: var(--primary-cyan);
+            color: #0b0f19;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Spinner */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--primary-cyan);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
             animation: spin 0.8s linear infinite;
+            display: none;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Direction specific tweaks */
-        [dir="rtl"] .icon-lead { margin-left: 0.5rem; }
-        [dir="ltr"] .icon-lead { margin-right: 0.5rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="cyber-grid flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8 relative selection:bg-cyan-500 selection:text-black">
+<body>
 
-    <!-- Canvas Background -->
-    <canvas id="bg-canvas"></canvas>
+    <canvas id="particleCanvas"></canvas>
 
-    <!-- Main Outer Wrapper -->
-    <div class="w-full max-w-2xl z-10 my-4 sm:my-6">
+    <div class="container">
         
-        <!-- Header Controls Bar -->
-        <div class="glass-card rounded-2xl p-3 sm:p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
-            
-            <!-- Logo & Brand Title -->
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="flex items-center gap-2.5 group">
-                    <img src="https://saivcore.github.io/main/images/logo.png" 
-                         alt="SaivCORE Logo" 
-                         onerror="this.onerror=null; this.src='https://placehold.co/80x80/090d16/00f2fe?text=SaivCORE';"
-                         class="w-10 h-10 object-contain rounded-xl bg-gray-900/80 p-1 border border-cyan-500/30 group-hover:scale-105 transition-transform duration-300">
-                    <div>
-                        <span class="font-extrabold text-lg text-white tracking-wide block leading-none">SaivCORE</span>
-                        <span class="text-[10px] text-cyan-400/80 font-mono tracking-wider">TECH ENTERPRISE</span>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Language Switcher Pills -->
-            <div class="flex items-center gap-1.5 bg-gray-950/80 p-1 rounded-xl border border-white/10 text-xs font-semibold">
-                <button onclick="setLanguage('ar')" id="lang-ar" class="lang-btn px-3 py-1.5 rounded-lg border border-transparent text-gray-300 hover:text-cyan-400">
-                    العربية
-                </button>
-                <button onclick="setLanguage('fr')" id="lang-fr" class="lang-btn px-3 py-1.5 rounded-lg border border-transparent text-gray-300 hover:text-cyan-400">
-                    Français
-                </button>
-                <button onclick="setLanguage('en')" id="lang-en" class="lang-btn px-3 py-1.5 rounded-lg border border-transparent text-gray-300 hover:text-cyan-400">
-                    English
-                </button>
-            </div>
-
-            <!-- System Online Badge -->
-            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-500/30 text-[11px] font-mono text-emerald-400">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="txt-status-online">SYSTEM ONLINE</span>
-            </div>
+        <!-- Language Switcher -->
+        <div class="lang-toolbar">
+            <button class="lang-btn active" onclick="switchLang('ar')">العربية</button>
+            <button class="lang-btn" onclick="switchLang('fr')">Français</button>
+            <button class="lang-btn" onclick="switchLang('en')">English</button>
         </div>
 
-        <!-- Service Request Glass Card -->
-        <div class="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-            
-            <!-- Decorative Glow Orbs -->
-            <div class="absolute -top-24 -left-24 w-48 h-48 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
-
-            <!-- Form Card Header -->
-            <div class="text-center mb-8 relative">
-                <div class="inline-flex p-3.5 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-3xl mb-3 shadow-lg shadow-cyan-500/10">
-                    <i class="fa-solid fa-rocket"></i>
+        <div class="form-card">
+            <div class="header-box">
+                <img src="https://saivcore.github.io/main/images/logo.png" alt="SaivCORE Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/85/00f2fe/0b0f19?text=SaivCORE'">
+                <h1 class="title" id="txt-title">SaivCORE — طلب خدمة</h1>
+                <p class="subtitle" id="txt-subtitle">يرجى ملء الاستمارة وسنتواصل معك في أقرب وقت عبر الواتساب أو الهاتف</p>
+                <div class="status-badge">
+                    <span class="pulse-dot"></span>
+                    <span id="txt-status">استقبال الطلبات مفتوح الآن</span>
                 </div>
-                <h1 id="txt-title" class="text-2xl sm:text-3xl font-black gradient-text mb-2">طلب خدمة جديد</h1>
-                <p id="txt-subtitle" class="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
-                    قم بملء البيانات وسنقوم بالتواصل معك لمباشرة تنفيذ مشروعك
-                </p>
             </div>
 
-            <!-- Service Request Form -->
-            <form id="serviceForm" onsubmit="submitForm(event)" class="space-y-5">
-                
+            <form id="serviceForm">
                 <!-- Full Name -->
-                <div>
-                    <label id="lbl-fullname" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
-                        الاسم واللقب <span class="text-cyan-400">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none icon-pos">
-                            <i class="fa-regular fa-user"></i>
-                        </span>
-                        <input type="text" id="fullName" required 
-                               class="input-cyber w-full py-3 rounded-xl text-sm field-padding">
+                <div class="form-group">
+                    <label class="form-label" id="lbl-fullname">الاسم واللقب *</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" name="fullname" class="form-control" required placeholder="مثال: سيف الإسلام">
                     </div>
                 </div>
 
-                <!-- Phone / WhatsApp & Wilaya Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Phone / WhatsApp -->
-                    <div>
-                        <label id="lbl-phone" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
-                            رقم الهاتف / واتساب <span class="text-cyan-400">*</span>
-                        </label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none icon-pos">
-                                <i class="fa-brands fa-whatsapp"></i>
-                            </span>
-                            <input type="tel" id="phone" required placeholder="0793390349" dir="ltr"
-                                   class="input-cyber w-full py-3 rounded-xl text-sm field-padding text-start">
-                        </div>
-                    </div>
-
-                    <!-- Wilaya / City -->
-                    <div>
-                        <label id="lbl-wilaya" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
-                            الولاية / المدينة <span class="text-cyan-400">*</span>
-                        </label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none icon-pos">
-                                <i class="fa-solid fa-location-dot"></i>
-                            </span>
-                            <input type="text" id="wilaya" required 
-                                   class="input-cyber w-full py-3 rounded-xl text-sm field-padding">
-                        </div>
+                <!-- Phone -->
+                <div class="form-group">
+                    <label class="form-label" id="lbl-phone">رقم الهاتف / واتساب *</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-phone input-icon"></i>
+                        <input type="tel" name="phone" class="form-control" required placeholder="0793390349">
                     </div>
                 </div>
 
-                <!-- Email (Optional) -->
-                <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label id="lbl-email" class="text-xs sm:text-sm font-semibold text-gray-200">البريد الإلكتروني</label>
-                        <span id="lbl-optional" class="text-[11px] text-gray-400 font-normal">(اختياري)</span>
-                    </div>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none icon-pos">
-                            <i class="fa-regular fa-envelope"></i>
-                        </span>
-                        <input type="email" id="email" placeholder="example@gmail.com" dir="ltr"
-                               class="input-cyber w-full py-3 rounded-xl text-sm field-padding text-start">
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label" id="lbl-email">البريد الإلكتروني (اختياري)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                        <input type="email" name="email" class="form-control" placeholder="name@domain.com">
                     </div>
                 </div>
 
-                <!-- Service Type Selection (9 Updated Services) -->
-                <div>
-                    <label id="lbl-service-type" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
-                        نوع الخدمة المطلوبة <span class="text-cyan-400">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none icon-pos">
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
-                        </span>
-                        <select id="serviceType" required class="input-cyber w-full py-3 rounded-xl text-sm appearance-none bg-gray-900/90 field-padding cursor-pointer">
-                            <!-- Populated dynamically via JS -->
+                <!-- Wilaya -->
+                <div class="form-group">
+                    <label class="form-label" id="lbl-wilaya">الولاية / المدينة *</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-location-dot input-icon"></i>
+                        <input type="text" name="wilaya" class="form-control" required placeholder="مثال: وهران / Oran">
+                    </div>
+                </div>
+
+                <!-- Service Selector -->
+                <div class="form-group">
+                    <label class="form-label" id="lbl-service">نوع الخدمة المطلوبة *</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-list-check input-icon"></i>
+                        <select name="service" class="form-control" id="select-service" required>
+                            <!-- Options rendered dynamically -->
                         </select>
-                        <span class="absolute inset-y-0 flex items-center pointer-events-none text-gray-400 icon-chevron">
-                            <i class="fa-solid fa-chevron-down text-xs"></i>
-                        </span>
                     </div>
                 </div>
 
-                <!-- Urgency Level Radio Buttons -->
-                <div>
-                    <label id="lbl-urgency" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-2">درجة الاستعجال</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="urgency" value="🔴 High" class="peer hidden">
-                            <div class="p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-center text-xs font-semibold text-gray-300 peer-checked:border-rose-500 peer-checked:bg-rose-500/15 peer-checked:text-rose-400 transition-all hover:border-gray-700">
-                                <span id="opt-urgency-high">🔴 مستعجل جداً</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="urgency" value="🟡 Medium" checked class="peer hidden">
-                            <div class="p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-center text-xs font-semibold text-gray-300 peer-checked:border-amber-500 peer-checked:bg-amber-500/15 peer-checked:text-amber-400 transition-all hover:border-gray-700">
-                                <span id="opt-urgency-medium">🟡 متوسط</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="urgency" value="🟢 Normal" class="peer hidden">
-                            <div class="p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-center text-xs font-semibold text-gray-300 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/15 peer-checked:text-emerald-400 transition-all hover:border-gray-700">
-                                <span id="opt-urgency-low">🟢 غير مستعجل</span>
-                            </div>
-                        </label>
+                <!-- Urgency -->
+                <div class="form-group">
+                    <label class="form-label" id="lbl-urgency">درجة الاستعجال</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-clock input-icon"></i>
+                        <select name="urgency" class="form-control" id="select-urgency">
+                            <!-- Options rendered dynamically -->
+                        </select>
                     </div>
                 </div>
 
-                <!-- Description Field -->
-                <div>
-                    <label id="lbl-details" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
-                        تفاصيل المشكلة أو المشروع <span class="text-cyan-400">*</span>
-                    </label>
-                    <textarea id="details" rows="4" required 
-                              class="input-cyber w-full p-3.5 rounded-xl text-sm resize-none"></textarea>
+                <!-- Details -->
+                <div class="form-group">
+                    <label class="form-label" id="lbl-details">تفاصيل الطلب / شرح المشكلة *</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-pen-to-square input-icon"></i>
+                        <textarea name="details" class="form-control" required placeholder="اكتب لنا تفاصيل الخدمة المطلوبة..."></textarea>
+                    </div>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" id="submitBtn" class="btn-glow w-full py-3.5 rounded-xl text-gray-950 font-extrabold text-base flex items-center justify-center gap-2 shadow-xl mt-4 cursor-pointer">
-                    <span id="btnText">إرسال الطلب الآن</span>
-                    <i id="btnIcon" class="fa-solid fa-paper-plane"></i>
-                    <div id="btnSpinner" class="spinner hidden"></div>
+                <!-- Hidden Language Tracker -->
+                <input type="hidden" name="lang" id="input-lang" value="ar">
+
+                <button type="submit" class="submit-btn" id="btn-submit">
+                    <span id="txt-btn">إرسال الطلب الآن</span>
+                    <i class="fa-solid fa-paper-plane" id="icon-btn"></i>
+                    <div class="spinner" id="btn-spinner"></div>
                 </button>
-
             </form>
-        </div>
 
-        <!-- Footer Info -->
-        <div class="text-center text-xs text-gray-400 mt-6 space-y-1">
-            <p>© 2026 <span class="text-cyan-400 font-bold">SaivCORE</span> — <span id="txt-slogan">Building digital sovereignty with Algerian code</span> 🇩🇿</p>
+            <div class="footer">
+                &copy; 2026 SaivCORE — Building digital sovereignty with Algerian code 🇩🇿
+            </div>
         </div>
-
     </div>
 
-    <!-- Status Modal Dialog -->
-    <div id="statusModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-card max-w-sm w-full p-6 sm:p-7 rounded-3xl text-center flex flex-col items-center shadow-2xl relative border border-cyan-500/30">
-            <div id="modalIcon" class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4"></div>
-            <h3 id="modalTitle" class="text-xl font-bold text-white mb-2"></h3>
-            <p id="modalMsg" class="text-xs sm:text-sm text-gray-300 mb-6 leading-relaxed"></p>
-            <button onclick="closeStatusModal()" id="btn-modal-close" class="w-full py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm transition-colors cursor-pointer border border-white/10">
-                موافق
-            </button>
+    <!-- Status Modal -->
+    <div class="modal-overlay" id="statusModal">
+        <div class="modal-card">
+            <div class="modal-icon" id="modalIcon"><i class="fa-solid fa-circle-check"></i></div>
+            <h3 class="modal-title" id="modalTitle">تم إرسال الطلب بنجاح!</h3>
+            <p class="modal-desc" id="modalDesc">شكراً لك! وسنتواصل معك في أقرب وقت عبر الواتساب أو البريد.</p>
+            <button class="modal-btn" onclick="closeModal()" id="modalBtn">موافق</button>
         </div>
     </div>
 
     <script>
-        // ⚠️ Paste your deployed Google Apps Script Web App URL here:
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8aFzvlasdr8I0okxdM2G4ly0y-F1z9OqFlCjfIwiDyuiRAZi71Q7jCF_yRHV9P_EmkA/exec";
+        // 🔗 رابط GOOGLE APPS SCRIPT
+        const SCRIPT_URL = "ضع_رابط_GOOGLE_SCRIPT_هنا";
 
-        // Complete 3-Language Dictionary (AR, FR, EN)
+        // Multilingual Dictionary
         const i18n = {
             ar: {
                 dir: "rtl",
-                lang: "ar",
-                statusOnline: "النظام متصل",
-                title: "طلب خدمة جديد",
-                subtitle: "قم بملء البيانات وسنقوم بالتواصل معك لمباشرة تنفيذ مشروعك",
-                lblName: "الاسم واللقب",
-                placeholderName: "مثال: سيف الإسلام",
-                lblPhone: "رقم الهاتف / واتساب",
-                lblWilaya: "الولاية / المدينة",
-                placeholderWilaya: "مثال: وهران",
-                lblEmail: "البريد الإلكتروني",
-                lblOptional: "(اختياري)",
-                lblServiceType: "نوع الخدمة المطلوبة",
-                selectPrompt: "اختر الخدمة المطلوبة من القائمة...",
-                services: [
-                    "🛠️ maintenance hardware — صيانة العتاد (إصلاح حواسيب، تغيير قطع الغيار، تنظيف شامل)",
-                    "💻 maintenance software — صيانة البرمجيات (فورماتاج، تثبيت ويندوز / لينكس)",
-                    "📦 installation apps — تثبيت جميع البرامج والتطبيقات مع التفعيل الكامل",
-                    "📄 mémoires & thèses — إعداد وتنسيق وطباعة المذكرات والبحوث (ملون / أسود وأبيض)",
-                    "🎨 graphic design — تصميم جرافيكي (شعارات، فلاير، بطاقات عمل، منشورات)",
-                    "🎬 vidéo pub — فيديو إشهاري وإعلاني حسب الطلب",
-                    "🌐 web dev — تطوير المواقع والحلول الإلكترونية",
-                    "🖥️ pc apps dev — تطوير تطبيقات وبرامج الحواسيب",
-                    "❓ autres — خدمات واستشارات أخرى..."
-                ],
+                title: "SaivCORE — طلب خدمة",
+                subtitle: "يرجى ملء الاستمارة وسنتواصل معك في أقرب وقت عبر الواتساب أو البريد",
+                status: "استقبال الطلبات مفتوح الآن",
+                lblFullname: "الاسم واللقب *",
+                phFullname: "مثال: سيف الإسلام",
+                lblPhone: "رقم الهاتف / واتساب *",
+                phPhone: "0793390349",
+                lblEmail: "البريد الإلكتروني (اختياري)",
+                phEmail: "name@domain.com",
+                lblWilaya: "الولاية / المدينة *",
+                phWilaya: "مثال: وهران / Oran",
+                lblService: "نوع الخدمة المطلوبة *",
                 lblUrgency: "درجة الاستعجال",
-                urgencyHigh: "🔴 مستعجل جداً (24-48 ساعة)",
-                urgencyMedium: "🟡 متوسط (خلال هذا الأسبوع)",
-                urgencyLow: "🟢 غير مستعجل",
-                lblDetails: "تفاصيل المشكلة أو المشروع",
-                placeholderDetails: "اكتب لنا تفاصيل مشروعك أو ما تحتاجه بالضبط...",
+                lblDetails: "تفاصيل الطلب / شرح المشكلة *",
+                phDetails: "اكتب لنا تفاصيل الخدمة المطلوبة...",
                 btnSubmit: "إرسال الطلب الآن",
-                btnSubmitting: "جاري الإرسال...",
-                btnModalClose: "موافق",
-                slogan: "بناء السيادة الرقمية بأيادٍ برمجية جزائرية",
-                scriptNoticeTitle: "تنبيه إعدادات Google Script",
-                scriptNoticeMsg: "يرجى وضع رابط Google Apps Script الخاص بك في السطر المخصص (SCRIPT_URL) داخل الكود للربط مع قاعدة البيانات.",
-                successTitle: "تم إرسال الطلب بنجاح! 🚀",
-                successMsg: "شكراً لتواصلك مع SaivCORE. تم إرسال طلبك بنجاح وسنتواصل معك في أقرب وقت عبر الهاتف أو الواتساب.",
-                errorTitle: "حدث خطأ أثناء الإرسال",
-                errorMsg: "يرجى التأكد من اتصال الإنترنت أو التواصل معنا مباشرة عبر الهاتف/الواتساب."
+                btnSending: "جاري الإرسال...",
+                modalSuccessTitle: "تم إرسال الطلب بنجاح!",
+                modalSuccessDesc: "وصلنا طلبك بنجاح وسنتواصل معك في أقرب وقت ممكن.",
+                modalErrorTitle: "حدث خطأ أثناء الإرسال",
+                modalErrorDesc: "يرجى التأكد من الاتصال بالإنترنت وإعادة المحاولة.",
+                modalBtnClose: "موافق",
+                services: [
+                    { val: "", text: "اختر الخدمة المطلوبة...", disabled: true },
+                    { val: "Maintenance Hardware", text: "💻 Maintenance Hardware (إصلاح وتغيير قطع الحواسيب وتنظيفها)" },
+                    { val: "Maintenance Software", text: "⚙️ Maintenance Software (Formatage, Installation OS Windows/Linux)" },
+                    { val: "Apps Installation & Activation", text: "📦 تثبيت البرامج والتطبيقات مع التفعيل الشامل" },
+                    { val: "Memoirs & Research Formatting", text: "📄 إعداد وتنسيق وطباعة المذكرات والبحوث (ملون / أسود وأبيض)" },
+                    { val: "Graphic Design", text: "🎨 تصميم جرافيكي (Logos, Flyers, Visit Cards, Social Media Posts)" },
+                    { val: "Promotional Video", text: "🎬 إنتاج فيديو إشهاري حسب الطلب (Video Publicitaire)" },
+                    { val: "Web Development", text: "🌐 تطوير مواقع وحلول ويب (Sites & Applications Web)" },
+                    { val: "Desktop App Development", text: "🖥️ تطوير تطبيقات حاسوب خاصة (Desktop PC Apps)" },
+                    { val: "Autres", text: "❓ خدمات وتستشارات تقنية أخرى (Autres...)" }
+                ],
+                urgencies: [
+                    { val: "🔴 مستعجل جداً (24-48 ساعة)", text: "🔴 مستعجل جداً (خلال 24-48 ساعة)" },
+                    { val: "🟡 متوسط (خلال هذا الأسبوع)", text: "🟡 متوسط (خلال هذا الأسبوع)" },
+                    { val: "🟢 غير مستعجل (مشروع مستقبلي)", text: "🟢 غير مستعجل (مشروع مستقبلي)" }
+                ]
             },
             fr: {
                 dir: "ltr",
-                lang: "fr",
-                statusOnline: "SYSTÈME EN LIGNE",
-                title: "Demande de Service",
-                subtitle: "Remplissez le formulaire et nous vous contacterons pour démarrer votre projet",
-                lblName: "Nom et Prénom",
-                placeholderName: "ex: Saif El Islam",
-                lblPhone: "N° Téléphone / WhatsApp",
-                lblWilaya: "Wilaya / Ville",
-                placeholderWilaya: "ex: Oran",
-                lblEmail: "Adresse Email",
-                lblOptional: "(Optionnel)",
-                lblServiceType: "Type de service requis",
-                selectPrompt: "Sélectionnez un service dans la liste...",
-                services: [
-                    "🛠️ Maintenance Hardware (Réparation PC, pièces de rechange, nettoyage complet)",
-                    "💻 Maintenance Software (Formatage, installation OS Windows / Linux)",
-                    "📦 Installation d'applications & logiciels avec activation complète",
-                    "📄 Préparation, mise en page & impression de mémoires (Couleur / NB)",
-                    "🎨 Design Graphique (Logos, flyers, cartes de visite, posts réseaux)",
-                    "🎬 Vidéo publicitaire & promotionnelle sur commande",
-                    "🌐 Développement Web & Solutions Web sur mesure",
-                    "🖥️ Développement d'applications PC / Desktop",
-                    "❓ Autres services & consultations..."
-                ],
-                lblUrgency: "Niveau d'urgence",
-                urgencyHigh: "🔴 Très urgent (24-48h)",
-                urgencyMedium: "🟡 Moyen (cette semaine)",
-                urgencyLow: "🟢 Normal / Non urgent",
-                lblDetails: "Détails du projet ou du problème",
-                placeholderDetails: "Décrivez les détails de votre projet ou votre besoin exact...",
+                title: "SaivCORE — Demande de Service",
+                subtitle: "Veuillez remplir le formulaire, nous vous contacterons dans les plus brefs délais",
+                status: "Réception des demandes ouverte",
+                lblFullname: "Nom et Prénom *",
+                phFullname: "Ex: Saif El Islem",
+                lblPhone: "Numéro de Téléphone / WhatsApp *",
+                phPhone: "0793390349",
+                lblEmail: "Adresse Email (Optionnel)",
+                phEmail: "nom@domaine.com",
+                lblWilaya: "Wilaya / Ville *",
+                phWilaya: "Ex: Oran / وهران",
+                lblService: "Type de Service Requis *",
+                lblUrgency: "Niveau d'Urgence",
+                lblDetails: "Détails du Projet / Problème *",
+                phDetails: "Décrivez brièvement votre besoin...",
                 btnSubmit: "Envoyer la demande",
-                btnSubmitting: "Envoi en cours...",
-                btnModalClose: "D'accord",
-                slogan: "Bâtir la souveraineté numérique par le code algérien",
-                scriptNoticeTitle: "Configuration Script Requise",
-                scriptNoticeMsg: "Veuillez insérer votre lien Google Apps Script dans la variable SCRIPT_URL du code pour recevoir vos demandes.",
-                successTitle: "Demande envoyée avec succès ! 🚀",
-                successMsg: "Merci de contacter SaivCORE. Votre demande a bien été reçue et nous vous contacterons sous peu par téléphone ou WhatsApp.",
-                errorTitle: "Erreur lors de l'envoi",
-                errorMsg: "Veuillez vérifier votre connexion internet ou nous contacter directement par téléphone / WhatsApp."
+                btnSending: "Envoi en cours...",
+                modalSuccessTitle: "Demande envoyée avec succès!",
+                modalSuccessDesc: "Nous avons bien reçu votre demande et nous vous contacterons très bientôt.",
+                modalErrorTitle: "Erreur d'envoi",
+                modalErrorDesc: "Veuillez vérifier votre connexion Internet et réessayer.",
+                modalBtnClose: "Fermer",
+                services: [
+                    { val: "", text: "Sélectionnez un service...", disabled: true },
+                    { val: "Maintenance Hardware", text: "💻 Maintenance Hardware (Réparation PC, pièces, nettoyage)" },
+                    { val: "Maintenance Software", text: "⚙️ Maintenance Software (Formatage, Installation OS Win/Linux)" },
+                    { val: "Apps Installation & Activation", text: "📦 Installation & Activation de Logiciels" },
+                    { val: "Memoirs & Research Formatting", text: "📄 Mise en page & Impression Mémoires/Recherches (Couleur/N&B)" },
+                    { val: "Graphic Design", text: "🎨 Design Graphique (Logos, Flyers, Cartes de visite, Social Media)" },
+                    { val: "Promotional Video", text: "🎬 Production Vidéo Publicitaire sur commande" },
+                    { val: "Web Development", text: "🌐 Développement Web & Solutions Sur Mesure" },
+                    { val: "Desktop App Development", text: "🖥️ Développement d'Applications PC (Desktop)" },
+                    { val: "Autres", text: "❓ Autres services & consultations techniques" }
+                ],
+                urgencies: [
+                    { val: "🔴 Très Urgent (24-48h)", text: "🔴 Très Urgent (Sous 24 à 48 heures)" },
+                    { val: "🟡 Moyen (Cette semaine)", text: "🟡 Moyen (Moyennement urgent cette semaine)" },
+                    { val: "🟢 Non urgent", text: "🟢 Non urgent (Projet futur)" }
+                ]
             },
             en: {
                 dir: "ltr",
-                lang: "en",
-                statusOnline: "SYSTEM ONLINE",
-                title: "New Service Request",
-                subtitle: "Fill out the form and we will reach out to start your project",
-                lblName: "Full Name",
-                placeholderName: "e.g., Saif El Islam",
-                lblPhone: "Phone / WhatsApp Number",
-                lblWilaya: "State / City / Wilaya",
-                placeholderWilaya: "e.g., Oran",
-                lblEmail: "Email Address",
-                lblOptional: "(Optional)",
-                lblServiceType: "Requested Service Type",
-                selectPrompt: "Choose a service from the list...",
-                services: [
-                    "🛠️ Hardware Maintenance (PC repair, parts replacement, deep cleaning)",
-                    "💻 Software Maintenance (Formatting, OS install Windows / Linux)",
-                    "📦 Applications & Software Installation with full activation",
-                    "📄 Thesis & Research Formatting & Printing (Color / B&W)",
-                    "🎨 Graphic Design (Logos, flyers, business cards, social posts)",
-                    "🎬 Promotional & Commercial Video on demand",
-                    "🌐 Custom Web Development & Web Solutions",
-                    "🖥️ PC & Desktop Application Development",
-                    "❓ Other services & consultations..."
-                ],
+                title: "SaivCORE — Service Request",
+                subtitle: "Please fill out the form below, and we will get back to you shortly",
+                status: "Receiving requests actively",
+                lblFullname: "Full Name *",
+                phFullname: "Ex: Saif El Islem",
+                lblPhone: "Phone Number / WhatsApp *",
+                phPhone: "0793390349",
+                lblEmail: "Email Address (Optional)",
+                phEmail: "name@domain.com",
+                lblWilaya: "Wilaya / City *",
+                phWilaya: "Ex: Oran / Algeria",
+                lblService: "Requested Service *",
                 lblUrgency: "Urgency Level",
-                urgencyHigh: "🔴 Very Urgent (24-48 hours)",
-                urgencyMedium: "🟡 Medium (Within this week)",
-                urgencyLow: "🟢 Normal / Not Urgent",
-                lblDetails: "Project or Issue Details",
-                placeholderDetails: "Describe the details of your project or specific requirements...",
+                lblDetails: "Project Details / Issue Description *",
+                phDetails: "Provide details about your project or hardware issue...",
                 btnSubmit: "Submit Request Now",
-                btnSubmitting: "Submitting...",
-                btnModalClose: "Got it",
-                slogan: "Building digital sovereignty with Algerian code",
-                scriptNoticeTitle: "Google Script Setup Required",
-                scriptNoticeMsg: "Please configure your Google Apps Script Web App link inside SCRIPT_URL variable to link submissions.",
-                successTitle: "Request Sent Successfully! 🚀",
-                successMsg: "Thank you for contacting SaivCORE. Your request was received and we will contact you shortly via Phone or WhatsApp.",
-                errorTitle: "Submission Error",
-                errorMsg: "Please check your internet connection or contact us directly via Phone or WhatsApp."
+                btnSending: "Sending...",
+                modalSuccessTitle: "Request Sent Successfully!",
+                modalSuccessDesc: "Your request has been received. We will contact you via WhatsApp/Email soon.",
+                modalErrorTitle: "Submission Error",
+                modalErrorDesc: "Please check your internet connection and try again.",
+                modalBtnClose: "Close",
+                services: [
+                    { val: "", text: "Select required service...", disabled: true },
+                    { val: "Maintenance Hardware", text: "💻 Hardware Maintenance (PC Repair, replacement, deep clean)" },
+                    { val: "Maintenance Software", text: "⚙️ Software Maintenance (Formatting, OS Win/Linux Setup)" },
+                    { val: "Apps Installation & Activation", text: "📦 Software & Apps Installation with full Activation" },
+                    { val: "Memoirs & Research Formatting", text: "📄 Thesis & Research Formatting & Printing (Color/BW)" },
+                    { val: "Graphic Design", text: "🎨 Graphic Design (Logos, Flyers, Business Cards, Posts)" },
+                    { val: "Promotional Video", text: "🎬 Custom Commercial Video Production" },
+                    { val: "Web Development", text: "🌐 Web Development & Solutions" },
+                    { val: "Desktop App Development", text: "🖥️ PC Desktop Software Development" },
+                    { val: "Autres", text: "❓ Other IT & Technical Services" }
+                ],
+                urgencies: [
+                    { val: "🔴 High Urgency (24-48h)", text: "🔴 High Urgency (Within 24-48 hours)" },
+                    { val: "🟡 Medium Urgency", text: "🟡 Medium Urgency (Within this week)" },
+                    { val: "🟢 Low Urgency", text: "🟢 Low Urgency (Future project)" }
+                ]
             }
         };
 
         let currentLang = 'ar';
 
-        // Dynamic Language Setter Function
-        function setLanguage(lang) {
-            if (!i18n[lang]) return;
+        function switchLang(lang) {
             currentLang = lang;
             const data = i18n[lang];
 
-            // 1. Set HTML Direction & Lang attributes
             document.documentElement.setAttribute('dir', data.dir);
-            document.documentElement.setAttribute('lang', data.lang);
+            document.documentElement.setAttribute('lang', lang);
+            document.getElementById('input-lang').value = lang;
 
-            // 2. Adjust Icon placements for RTL/LTR
-            const iconPositions = document.querySelectorAll('.icon-pos');
-            const iconChevrons = document.querySelectorAll('.icon-chevron');
-            const fieldPaddings = document.querySelectorAll('.field-padding');
+            // Update Text Content
+            document.getElementById('txt-title').innerText = data.title;
+            document.getElementById('txt-subtitle').innerText = data.subtitle;
+            document.getElementById('txt-status').innerText = data.status;
 
-            if (data.dir === 'rtl') {
-                iconPositions.forEach(el => { el.style.right = '0.9rem'; el.style.left = 'auto'; });
-                iconChevrons.forEach(el => { el.style.left = '0.9rem'; el.style.right = 'auto'; });
-                fieldPaddings.forEach(el => { el.style.paddingRight = '2.6rem'; el.style.paddingLeft = '1rem'; });
-            } else {
-                iconPositions.forEach(el => { el.style.left = '0.9rem'; el.style.right = 'auto'; });
-                iconChevrons.forEach(el => { el.style.right = '0.9rem'; el.style.left = 'auto'; });
-                fieldPaddings.forEach(el => { el.style.paddingLeft = '2.6rem'; el.style.paddingRight = '1rem'; });
-            }
+            document.getElementById('lbl-fullname').innerText = data.lblFullname;
+            document.querySelector('input[name="fullname"]').placeholder = data.phFullname;
 
-            // 3. Update Text Content Across Page
-            document.getElementById('txt-status-online').textContent = data.statusOnline;
-            document.getElementById('txt-title').textContent = data.title;
-            document.getElementById('txt-subtitle').textContent = data.subtitle;
+            document.getElementById('lbl-phone').innerText = data.lblPhone;
+            document.querySelector('input[name="phone"]').placeholder = data.phPhone;
 
-            document.getElementById('lbl-fullname').childNodes[0].nodeValue = data.lblName + ' ';
-            document.getElementById('fullName').placeholder = data.placeholderName;
+            document.getElementById('lbl-email').innerText = data.lblEmail;
+            document.querySelector('input[name="email"]').placeholder = data.phEmail;
 
-            document.getElementById('lbl-phone').childNodes[0].nodeValue = data.lblPhone + ' ';
-            document.getElementById('lbl-wilaya').childNodes[0].nodeValue = data.lblWilaya + ' ';
-            document.getElementById('wilaya').placeholder = data.placeholderWilaya;
+            document.getElementById('lbl-wilaya').innerText = data.lblWilaya;
+            document.querySelector('input[name="wilaya"]').placeholder = data.phWilaya;
 
-            document.getElementById('lbl-email').textContent = data.lblEmail;
-            document.getElementById('lbl-optional').textContent = data.lblOptional;
+            document.getElementById('lbl-service').innerText = data.lblService;
+            document.getElementById('lbl-urgency').innerText = data.lblUrgency;
 
-            document.getElementById('lbl-service-type').childNodes[0].nodeValue = data.lblServiceType + ' ';
-            
-            // Re-populate Service Dropdown
-            const select = document.getElementById('serviceType');
-            const currentSelected = select.value;
-            select.innerHTML = `<option value="" disabled ${!currentSelected ? 'selected' : ''}>${data.selectPrompt}</option>`;
-            
-            data.services.forEach((serviceText, index) => {
+            document.getElementById('lbl-details').innerText = data.lblDetails;
+            document.querySelector('textarea[name="details"]').placeholder = data.phDetails;
+
+            document.getElementById('txt-btn').innerText = data.btnSubmit;
+
+            // Render Services Dropdown
+            const selectService = document.getElementById('select-service');
+            selectService.innerHTML = '';
+            data.services.forEach(s => {
                 const opt = document.createElement('option');
-                opt.value = serviceText;
-                opt.textContent = serviceText;
-                if (currentSelected && currentSelected.includes(index + 1)) {
-                    opt.selected = true;
-                }
-                select.appendChild(opt);
+                opt.value = s.val;
+                opt.innerText = s.text;
+                if (s.disabled) opt.disabled = true, opt.selected = true;
+                selectService.appendChild(opt);
             });
 
-            document.getElementById('lbl-urgency').textContent = data.lblUrgency;
-            document.getElementById('opt-urgency-high').textContent = data.urgencyHigh;
-            document.getElementById('opt-urgency-medium').textContent = data.urgencyMedium;
-            document.getElementById('opt-urgency-low').textContent = data.urgencyLow;
-
-            document.getElementById('lbl-details').childNodes[0].nodeValue = data.lblDetails + ' ';
-            document.getElementById('details').placeholder = data.placeholderDetails;
-
-            document.getElementById('btnText').textContent = data.btnSubmit;
-            document.getElementById('btn-modal-close').textContent = data.btnModalClose;
-            document.getElementById('txt-slogan').textContent = data.slogan;
-
-            // 4. Update Language Switcher Active States
-            ['ar', 'fr', 'en'].forEach(l => {
-                const btn = document.getElementById(`lang-${l}`);
-                if (l === lang) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
+            // Render Urgency Dropdown
+            const selectUrgency = document.getElementById('select-urgency');
+            selectUrgency.innerHTML = '';
+            data.urgencies.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.val;
+                opt.innerText = u.text;
+                selectUrgency.appendChild(opt);
             });
+
+            // Active Class on Lang Buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
         }
 
-        async function submitForm(e) {
+        // Initialize Default Language
+        switchLang('ar');
+
+        // Form Submission via Fetch API
+        const form = document.getElementById('serviceForm');
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const data = i18n[currentLang];
-
-            // Check if Google Script URL is missing
-            if (!SCRIPT_URL || SCRIPT_URL === "ضع_رابط_GOOGLE_SCRIPT_هنا") {
-                showModal('error', data.scriptNoticeTitle, data.scriptNoticeMsg);
+            if (!SCRIPT_URL || SCRIPT_URL.includes("ضع_رابط")) {
+                alert("يرجى وضع رابط Google Apps Script في الكود أولاً!");
                 return;
             }
 
-            const submitBtn = document.getElementById('submitBtn');
-            const btnText = document.getElementById('btnText');
-            const btnIcon = document.getElementById('btnIcon');
-            const btnSpinner = document.getElementById('btnSpinner');
+            // Show Loading State
+            document.getElementById('txt-btn').innerText = i18n[currentLang].btnSending;
+            document.getElementById('icon-btn').style.display = 'none';
+            document.getElementById('btn-spinner').style.display = 'inline-block';
 
-            // Set UI Loading State
-            submitBtn.disabled = true;
-            btnText.textContent = data.btnSubmitting;
-            btnIcon.classList.add('hidden');
-            btnSpinner.classList.remove('hidden');
+            const formData = new FormData(form);
 
-            const payload = {
-                fullName: document.getElementById('fullName').value,
-                phone: document.getElementById('phone').value,
-                wilaya: document.getElementById('wilaya').value,
-                email: document.getElementById('email').value || "N/A",
-                serviceType: document.getElementById('serviceType').value,
-                urgency: document.querySelector('input[name="urgency"]:checked').value,
-                details: document.getElementById('details').value,
-                lang: currentLang,
-                timestamp: new Date().toISOString()
-            };
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                resetBtnState();
+                if (data.status === 'success') {
+                    showModal('success');
+                    form.reset();
+                } else {
+                    showModal('error');
+                }
+            })
+            .catch(err => {
+                resetBtnState();
+                showModal('error');
+            });
+        });
 
-            try {
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                showModal('success', data.successTitle, data.successMsg);
-                document.getElementById('serviceForm').reset();
-
-            } catch (err) {
-                console.error(err);
-                showModal('error', data.errorTitle, data.errorMsg);
-            } finally {
-                submitBtn.disabled = false;
-                btnText.textContent = data.btnSubmit;
-                btnIcon.classList.remove('hidden');
-                btnSpinner.classList.add('hidden');
-            }
+        function resetBtnState() {
+            document.getElementById('txt-btn').innerText = i18n[currentLang].btnSubmit;
+            document.getElementById('icon-btn').style.display = 'inline-block';
+            document.getElementById('btn-spinner').style.display = 'none';
         }
 
-        // Modal Handler
-        function showModal(type, title, msg) {
+        function showModal(type) {
             const modal = document.getElementById('statusModal');
-            const modalIcon = document.getElementById('modalIcon');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalMsg = document.getElementById('modalMsg');
+            const data = i18n[currentLang];
 
             if (type === 'success') {
-                modalIcon.className = "w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10";
-                modalIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                document.getElementById('modalIcon').innerHTML = '<i class="fa-solid fa-circle-check" style="color: var(--accent-green)"></i>';
+                document.getElementById('modalTitle').innerText = data.modalSuccessTitle;
+                document.getElementById('modalDesc').innerText = data.modalSuccessDesc;
             } else {
-                modalIcon.className = "w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 bg-rose-500/20 text-rose-400 border border-rose-500/30 shadow-lg shadow-rose-500/10";
-                modalIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                document.getElementById('modalIcon').innerHTML = '<i class="fa-solid fa-circle-xmark" style="color: #ff5252"></i>';
+                document.getElementById('modalTitle').innerText = data.modalErrorTitle;
+                document.getElementById('modalDesc').innerText = data.modalErrorDesc;
             }
-
-            modalTitle.textContent = title;
-            modalMsg.textContent = msg;
-
-            modal.classList.remove('pointer-events-none', 'opacity-0');
-            modal.classList.add('opacity-100');
+            document.getElementById('modalBtn').innerText = data.modalBtnClose;
+            modal.classList.add('active');
         }
 
-        function closeStatusModal() {
-            const modal = document.getElementById('statusModal');
-            modal.classList.remove('opacity-100');
-            modal.classList.add('pointer-events-none', 'opacity-0');
+        function closeModal() {
+            document.getElementById('statusModal').classList.remove('active');
         }
 
-        // Animated Particle Swarm Background
-        const canvas = document.getElementById('bg-canvas');
+        // Particle Canvas Background
+        const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
-        let width, height, particles = [];
 
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-        window.addEventListener('resize', resize);
-        resize();
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.35;
-                this.vy = (Math.random() - 0.5) * 0.35;
-                this.radius = Math.random() * 1.5 + 0.8;
-                this.color = Math.random() > 0.5 ? '#00f2fe' : '#00e676';
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = 0.35;
-                ctx.fill();
-            }
+        const particles = [];
+        for (let i = 0; i < 35; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2 + 0.5,
+                speedX: (Math.random() - 0.5) * 0.4,
+                speedY: (Math.random() - 0.5) * 0.4,
+                alpha: Math.random() * 0.5 + 0.2
+            });
         }
-
-        for (let i = 0; i < 40; i++) particles.push(new Particle());
 
         function animate() {
-            ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 110) {
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = '#00f2fe';
-                        ctx.globalAlpha = (1 - dist / 110) * 0.12;
-                        ctx.stroke();
-                    }
-                }
-            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+
+                ctx.fillStyle = `rgba(0, 242, 254, ${p.alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
             requestAnimationFrame(animate);
         }
-
-        // Initialize default language and particle loop on DOM load
-        window.onload = function() {
-            setLanguage('ar');
-            animate();
-        };
+        animate();
     </script>
 </body>
 </html>
