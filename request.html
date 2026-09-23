@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaivCORE | طلب خدمة - Demande de Service - Service Request</title>
+    <meta name="description" content="SaivCORE - Enterprise Tech Solutions & Services in Algeria">
+    <meta name="theme-color" content="#090d16">
+    
+    <!-- Google Fonts: Tajawal for Arabic, Plus Jakarta Sans for EN/FR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#090d16',
+                            card: 'rgba(18, 26, 43, 0.78)',
+                            border: 'rgba(0, 242, 254, 0.22)',
+                            cyan: '#00f2fe',
+                            green: '#00e676',
+                            purple: '#7928ca',
+                            accent: '#3b82f6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'Plus Jakarta Sans', 'sans-serif'],
+                        en: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #090d16;
+            color: #f3f4f6;
+            font-family: 'Tajawal', 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Ambient glowing background grid */
+        .cyber-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 242, 254, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .glass-card {
+            background: rgba(18, 26, 43, 0.82);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 242, 254, 0.04);
+        }
+
+        .input-cyber {
+            background: rgba(9, 13, 22, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-cyber:focus {
+            border-color: #00f2fe;
+            box-shadow: 0 0 18px rgba(0, 242, 254, 0.35);
+            outline: none;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 10%, #00f2fe 60%, #00e676 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-glow {
+            background: linear-gradient(135deg, #00f2fe 0%, #00e676 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.55);
+        }
+
+        .lang-btn {
+            transition: all 0.25s ease;
+        }
+
+        .lang-btn.active {
+            background: rgba(0, 242, 254, 0.2);
+            border-color: #00f2fe;
+            color: #00f2fe;
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
+        }
+
+        /* Spinner animation */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            border-top: 3px solid #00f2fe;
+            width: 22px;
+            height: 22px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Direction specific tweaks */
+        [dir="rtl"] .icon-lead { margin-left: 0.5rem; }
+        [dir="ltr"] .icon-lead { margin-right: 0.5rem; }
+    </style>
+</head>
+<body class="cyber-grid flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8 relative selection:bg-cyan-500 selection:text-black">
+
+    <!-- Canvas Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Main Outer Wrapper -->
+    <div class="w-full max-w-2xl z-10 my-4 sm:my-6">
+        
+        <!-- Header Controls Bar -->
+        <div class="glass-card rounded-2xl p-3 sm:p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
+            
+            <!-- Logo & Brand Title -->
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-2.5 group">
+                    <img src="https://saivcore.github.io/main/images/logo.png" 
+                         alt="SaivCORE Logo" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/80x80/090d16/00f2fe?text=SaivCORE';"
+                         class="w-10 h-10 object-contain rounded-xl bg-gray-900/80 p-1 border border-cyan-500/30 group-hover:scale-105 transition-transform duration-300">
+                    <div>
+                        <span class="font-extrabold text-lg text-white tracking-wide block leading-none">SaivCORE</span>
+                        <span class="text-[10px] text-cyan-400/80 font-mono tracking-wider">TECH ENTERPRISE</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Language Switcher Pills -->
+            <div class="flex items-center gap-1.5 bg-gray-950/80 p-1 rounded-xl border border-white/10 text-xs font-semibold">
+                <button onclick="setLanguage('ar')" id="lang-ar" class="lang-btn px-3 py-1.5 rounded-lg border border-transparent text-gray-300 hover:text-cyan-400">
+                    العربية
+                </button>
+                <button onclick="setLanguage('fr')" id="lang-fr" class="lang-btn px-3 py-1.5 rounded-lg border border-transparent text-gray-300 hover:text-cyan-400">
+                    Français
+                </button>
+                <button onclick="setLanguage('en')" id="lang-en" class="lang-btn px-3 py-1.5 rounded-lg border border-transparent text-gray-300 hover:text-cyan-400">
+                    English
+                </button>
+            </div>
+
+            <!-- System Online Badge -->
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-500/30 text-[11px] font-mono text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="txt-status-online">SYSTEM ONLINE</span>
+            </div>
+        </div>
+
+        <!-- Service Request Glass Card -->
+        <div class="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+            
+            <!-- Decorative Glow Orbs -->
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Form Card Header -->
+            <div class="text-center mb-8 relative">
+                <div class="inline-flex p-3.5 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-3xl mb-3 shadow-lg shadow-cyan-500/10">
+                    <i class="fa-solid fa-rocket"></i>
+                </div>
+                <h1 id="txt-title" class="text-2xl sm:text-3xl font-black gradient-text mb-2">طلب خدمة جديد</h1>
+                <p id="txt-subtitle" class="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
+                    قم بملء البيانات وسنقوم بالتواصل معك لمباشرة تنفيذ مشروعك
+                </p>
+            </div>
+
+            <!-- Service Request Form -->
+            <form id="serviceForm" onsubmit="submitForm(event)" class="space-y-5">
+                
+                <!-- Full Name -->
+                <div>
+                    <label id="lbl-fullname" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
+                        الاسم واللقب <span class="text-cyan-400">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none icon-pos">
+                            <i class="fa-regular fa-user"></i>
+                        </span>
+                        <input type="text" id="fullName" required 
+                               class="input-cyber w-full py-3 rounded-xl text-sm field-padding">
+                    </div>
+                </div>
+
+                <!-- Phone / WhatsApp & Wilaya Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Phone / WhatsApp -->
+                    <div>
+                        <label id="lbl-phone" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
+                            رقم الهاتف / واتساب <span class="text-cyan-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none icon-pos">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </span>
+                            <input type="tel" id="phone" required placeholder="0793390349" dir="ltr"
+                                   class="input-cyber w-full py-3 rounded-xl text-sm field-padding text-start">
+                        </div>
+                    </div>
+
+                    <!-- Wilaya / City -->
+                    <div>
+                        <label id="lbl-wilaya" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
+                            الولاية / المدينة <span class="text-cyan-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none icon-pos">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </span>
+                            <input type="text" id="wilaya" required 
+                                   class="input-cyber w-full py-3 rounded-xl text-sm field-padding">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email (Optional) -->
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label id="lbl-email" class="text-xs sm:text-sm font-semibold text-gray-200">البريد الإلكتروني</label>
+                        <span id="lbl-optional" class="text-[11px] text-gray-400 font-normal">(اختياري)</span>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none icon-pos">
+                            <i class="fa-regular fa-envelope"></i>
+                        </span>
+                        <input type="email" id="email" placeholder="example@gmail.com" dir="ltr"
+                               class="input-cyber w-full py-3 rounded-xl text-sm field-padding text-start">
+                    </div>
+                </div>
+
+                <!-- Service Type Selection (9 Updated Services) -->
+                <div>
+                    <label id="lbl-service-type" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
+                        نوع الخدمة المطلوبة <span class="text-cyan-400">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 flex items-center text-gray-400 pointer-events-none icon-pos">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </span>
+                        <select id="serviceType" required class="input-cyber w-full py-3 rounded-xl text-sm appearance-none bg-gray-900/90 field-padding cursor-pointer">
+                            <!-- Populated dynamically via JS -->
+                        </select>
+                        <span class="absolute inset-y-0 flex items-center pointer-events-none text-gray-400 icon-chevron">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Urgency Level Radio Buttons -->
+                <div>
+                    <label id="lbl-urgency" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-2">درجة الاستعجال</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="urgency" value="🔴 High" class="peer hidden">
+                            <div class="p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-center text-xs font-semibold text-gray-300 peer-checked:border-rose-500 peer-checked:bg-rose-500/15 peer-checked:text-rose-400 transition-all hover:border-gray-700">
+                                <span id="opt-urgency-high">🔴 مستعجل جداً</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="urgency" value="🟡 Medium" checked class="peer hidden">
+                            <div class="p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-center text-xs font-semibold text-gray-300 peer-checked:border-amber-500 peer-checked:bg-amber-500/15 peer-checked:text-amber-400 transition-all hover:border-gray-700">
+                                <span id="opt-urgency-medium">🟡 متوسط</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="urgency" value="🟢 Normal" class="peer hidden">
+                            <div class="p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-center text-xs font-semibold text-gray-300 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/15 peer-checked:text-emerald-400 transition-all hover:border-gray-700">
+                                <span id="opt-urgency-low">🟢 غير مستعجل</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Description Field -->
+                <div>
+                    <label id="lbl-details" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
+                        تفاصيل المشكلة أو المشروع <span class="text-cyan-400">*</span>
+                    </label>
+                    <textarea id="details" rows="4" required 
+                              class="input-cyber w-full p-3.5 rounded-xl text-sm resize-none"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn" class="btn-glow w-full py-3.5 rounded-xl text-gray-950 font-extrabold text-base flex items-center justify-center gap-2 shadow-xl mt-4 cursor-pointer">
+                    <span id="btnText">إرسال الطلب الآن</span>
+                    <i id="btnIcon" class="fa-solid fa-paper-plane"></i>
+                    <div id="btnSpinner" class="spinner hidden"></div>
+                </button>
+
+            </form>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="text-center text-xs text-gray-400 mt-6 space-y-1">
+            <p>© 2026 <span class="text-cyan-400 font-bold">SaivCORE</span> — <span id="txt-slogan">Building digital sovereignty with Algerian code</span> 🇩🇿</p>
+        </div>
+
+    </div>
+
+    <!-- Status Modal Dialog -->
+    <div id="statusModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-card max-w-sm w-full p-6 sm:p-7 rounded-3xl text-center flex flex-col items-center shadow-2xl relative border border-cyan-500/30">
+            <div id="modalIcon" class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4"></div>
+            <h3 id="modalTitle" class="text-xl font-bold text-white mb-2"></h3>
+            <p id="modalMsg" class="text-xs sm:text-sm text-gray-300 mb-6 leading-relaxed"></p>
+            <button onclick="closeStatusModal()" id="btn-modal-close" class="w-full py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm transition-colors cursor-pointer border border-white/10">
+                موافق
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ Paste your deployed Google Apps Script Web App URL here:
+        const SCRIPT_URL = "ضع_رابط_GOOGLE_SCRIPT_هنا";
+
+        // Complete 3-Language Dictionary (AR, FR, EN)
+        const i18n = {
+            ar: {
+                dir: "rtl",
+                lang: "ar",
+                statusOnline: "النظام متصل",
+                title: "طلب خدمة جديد",
+                subtitle: "قم بملء البيانات وسنقوم بالتواصل معك لمباشرة تنفيذ مشروعك",
+                lblName: "الاسم واللقب",
+                placeholderName: "مثال: سيف الإسلام",
+                lblPhone: "رقم الهاتف / واتساب",
+                lblWilaya: "الولاية / المدينة",
+                placeholderWilaya: "مثال: وهران",
+                lblEmail: "البريد الإلكتروني",
+                lblOptional: "(اختياري)",
+                lblServiceType: "نوع الخدمة المطلوبة",
+                selectPrompt: "اختر الخدمة المطلوبة من القائمة...",
+                services: [
+                    "🛠️ maintenance hardware — صيانة العتاد (إصلاح حواسيب، تغيير قطع الغيار، تنظيف شامل)",
+                    "💻 maintenance software — صيانة البرمجيات (فورماتاج، تثبيت ويندوز / لينكس)",
+                    "📦 installation apps — تثبيت جميع البرامج والتطبيقات مع التفعيل الكامل",
+                    "📄 mémoires & thèses — إعداد وتنسيق وطباعة المذكرات والبحوث (ملون / أسود وأبيض)",
+                    "🎨 graphic design — تصميم جرافيكي (شعارات، فلاير، بطاقات عمل، منشورات)",
+                    "🎬 vidéo pub — فيديو إشهاري وإعلاني حسب الطلب",
+                    "🌐 web dev — تطوير المواقع والحلول الإلكترونية",
+                    "🖥️ pc apps dev — تطوير تطبيقات وبرامج الحواسيب",
+                    "❓ autres — خدمات واستشارات أخرى..."
+                ],
+                lblUrgency: "درجة الاستعجال",
+                urgencyHigh: "🔴 مستعجل جداً (24-48 ساعة)",
+                urgencyMedium: "🟡 متوسط (خلال هذا الأسبوع)",
+                urgencyLow: "🟢 غير مستعجل",
+                lblDetails: "تفاصيل المشكلة أو المشروع",
+                placeholderDetails: "اكتب لنا تفاصيل مشروعك أو ما تحتاجه بالضبط...",
+                btnSubmit: "إرسال الطلب الآن",
+                btnSubmitting: "جاري الإرسال...",
+                btnModalClose: "موافق",
+                slogan: "بناء السيادة الرقمية بأيادٍ برمجية جزائرية",
+                scriptNoticeTitle: "تنبيه إعدادات Google Script",
+                scriptNoticeMsg: "يرجى وضع رابط Google Apps Script الخاص بك في السطر المخصص (SCRIPT_URL) داخل الكود للربط مع قاعدة البيانات.",
+                successTitle: "تم إرسال الطلب بنجاح! 🚀",
+                successMsg: "شكراً لتواصلك مع SaivCORE. تم إرسال طلبك بنجاح وسنتواصل معك في أقرب وقت عبر الهاتف أو الواتساب.",
+                errorTitle: "حدث خطأ أثناء الإرسال",
+                errorMsg: "يرجى التأكد من اتصال الإنترنت أو التواصل معنا مباشرة عبر الهاتف/الواتساب."
+            },
+            fr: {
+                dir: "ltr",
+                lang: "fr",
+                statusOnline: "SYSTÈME EN LIGNE",
+                title: "Demande de Service",
+                subtitle: "Remplissez le formulaire et nous vous contacterons pour démarrer votre projet",
+                lblName: "Nom et Prénom",
+                placeholderName: "ex: Saif El Islam",
+                lblPhone: "N° Téléphone / WhatsApp",
+                lblWilaya: "Wilaya / Ville",
+                placeholderWilaya: "ex: Oran",
+                lblEmail: "Adresse Email",
+                lblOptional: "(Optionnel)",
+                lblServiceType: "Type de service requis",
+                selectPrompt: "Sélectionnez un service dans la liste...",
+                services: [
+                    "🛠️ Maintenance Hardware (Réparation PC, pièces de rechange, nettoyage complet)",
+                    "💻 Maintenance Software (Formatage, installation OS Windows / Linux)",
+                    "📦 Installation d'applications & logiciels avec activation complète",
+                    "📄 Préparation, mise en page & impression de mémoires (Couleur / NB)",
+                    "🎨 Design Graphique (Logos, flyers, cartes de visite, posts réseaux)",
+                    "🎬 Vidéo publicitaire & promotionnelle sur commande",
+                    "🌐 Développement Web & Solutions Web sur mesure",
+                    "🖥️ Développement d'applications PC / Desktop",
+                    "❓ Autres services & consultations..."
+                ],
+                lblUrgency: "Niveau d'urgence",
+                urgencyHigh: "🔴 Très urgent (24-48h)",
+                urgencyMedium: "🟡 Moyen (cette semaine)",
+                urgencyLow: "🟢 Normal / Non urgent",
+                lblDetails: "Détails du projet ou du problème",
+                placeholderDetails: "Décrivez les détails de votre projet ou votre besoin exact...",
+                btnSubmit: "Envoyer la demande",
+                btnSubmitting: "Envoi en cours...",
+                btnModalClose: "D'accord",
+                slogan: "Bâtir la souveraineté numérique par le code algérien",
+                scriptNoticeTitle: "Configuration Script Requise",
+                scriptNoticeMsg: "Veuillez insérer votre lien Google Apps Script dans la variable SCRIPT_URL du code pour recevoir vos demandes.",
+                successTitle: "Demande envoyée avec succès ! 🚀",
+                successMsg: "Merci de contacter SaivCORE. Votre demande a bien été reçue et nous vous contacterons sous peu par téléphone ou WhatsApp.",
+                errorTitle: "Erreur lors de l'envoi",
+                errorMsg: "Veuillez vérifier votre connexion internet ou nous contacter directement par téléphone / WhatsApp."
+            },
+            en: {
+                dir: "ltr",
+                lang: "en",
+                statusOnline: "SYSTEM ONLINE",
+                title: "New Service Request",
+                subtitle: "Fill out the form and we will reach out to start your project",
+                lblName: "Full Name",
+                placeholderName: "e.g., Saif El Islam",
+                lblPhone: "Phone / WhatsApp Number",
+                lblWilaya: "State / City / Wilaya",
+                placeholderWilaya: "e.g., Oran",
+                lblEmail: "Email Address",
+                lblOptional: "(Optional)",
+                lblServiceType: "Requested Service Type",
+                selectPrompt: "Choose a service from the list...",
+                services: [
+                    "🛠️ Hardware Maintenance (PC repair, parts replacement, deep cleaning)",
+                    "💻 Software Maintenance (Formatting, OS install Windows / Linux)",
+                    "📦 Applications & Software Installation with full activation",
+                    "📄 Thesis & Research Formatting & Printing (Color / B&W)",
+                    "🎨 Graphic Design (Logos, flyers, business cards, social posts)",
+                    "🎬 Promotional & Commercial Video on demand",
+                    "🌐 Custom Web Development & Web Solutions",
+                    "🖥️ PC & Desktop Application Development",
+                    "❓ Other services & consultations..."
+                ],
+                lblUrgency: "Urgency Level",
+                urgencyHigh: "🔴 Very Urgent (24-48 hours)",
+                urgencyMedium: "🟡 Medium (Within this week)",
+                urgencyLow: "🟢 Normal / Not Urgent",
+                lblDetails: "Project or Issue Details",
+                placeholderDetails: "Describe the details of your project or specific requirements...",
+                btnSubmit: "Submit Request Now",
+                btnSubmitting: "Submitting...",
+                btnModalClose: "Got it",
+                slogan: "Building digital sovereignty with Algerian code",
+                scriptNoticeTitle: "Google Script Setup Required",
+                scriptNoticeMsg: "Please configure your Google Apps Script Web App link inside SCRIPT_URL variable to link submissions.",
+                successTitle: "Request Sent Successfully! 🚀",
+                successMsg: "Thank you for contacting SaivCORE. Your request was received and we will contact you shortly via Phone or WhatsApp.",
+                errorTitle: "Submission Error",
+                errorMsg: "Please check your internet connection or contact us directly via Phone or WhatsApp."
+            }
+        };
+
+        let currentLang = 'ar';
+
+        // Dynamic Language Setter Function
+        function setLanguage(lang) {
+            if (!i18n[lang]) return;
+            currentLang = lang;
+            const data = i18n[lang];
+
+            // 1. Set HTML Direction & Lang attributes
+            document.documentElement.setAttribute('dir', data.dir);
+            document.documentElement.setAttribute('lang', data.lang);
+
+            // 2. Adjust Icon placements for RTL/LTR
+            const iconPositions = document.querySelectorAll('.icon-pos');
+            const iconChevrons = document.querySelectorAll('.icon-chevron');
+            const fieldPaddings = document.querySelectorAll('.field-padding');
+
+            if (data.dir === 'rtl') {
+                iconPositions.forEach(el => { el.style.right = '0.9rem'; el.style.left = 'auto'; });
+                iconChevrons.forEach(el => { el.style.left = '0.9rem'; el.style.right = 'auto'; });
+                fieldPaddings.forEach(el => { el.style.paddingRight = '2.6rem'; el.style.paddingLeft = '1rem'; });
+            } else {
+                iconPositions.forEach(el => { el.style.left = '0.9rem'; el.style.right = 'auto'; });
+                iconChevrons.forEach(el => { el.style.right = '0.9rem'; el.style.left = 'auto'; });
+                fieldPaddings.forEach(el => { el.style.paddingLeft = '2.6rem'; el.style.paddingRight = '1rem'; });
+            }
+
+            // 3. Update Text Content Across Page
+            document.getElementById('txt-status-online').textContent = data.statusOnline;
+            document.getElementById('txt-title').textContent = data.title;
+            document.getElementById('txt-subtitle').textContent = data.subtitle;
+
+            document.getElementById('lbl-fullname').childNodes[0].nodeValue = data.lblName + ' ';
+            document.getElementById('fullName').placeholder = data.placeholderName;
+
+            document.getElementById('lbl-phone').childNodes[0].nodeValue = data.lblPhone + ' ';
+            document.getElementById('lbl-wilaya').childNodes[0].nodeValue = data.lblWilaya + ' ';
+            document.getElementById('wilaya').placeholder = data.placeholderWilaya;
+
+            document.getElementById('lbl-email').textContent = data.lblEmail;
+            document.getElementById('lbl-optional').textContent = data.lblOptional;
+
+            document.getElementById('lbl-service-type').childNodes[0].nodeValue = data.lblServiceType + ' ';
+            
+            // Re-populate Service Dropdown
+            const select = document.getElementById('serviceType');
+            const currentSelected = select.value;
+            select.innerHTML = `<option value="" disabled ${!currentSelected ? 'selected' : ''}>${data.selectPrompt}</option>`;
+            
+            data.services.forEach((serviceText, index) => {
+                const opt = document.createElement('option');
+                opt.value = serviceText;
+                opt.textContent = serviceText;
+                if (currentSelected && currentSelected.includes(index + 1)) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+
+            document.getElementById('lbl-urgency').textContent = data.lblUrgency;
+            document.getElementById('opt-urgency-high').textContent = data.urgencyHigh;
+            document.getElementById('opt-urgency-medium').textContent = data.urgencyMedium;
+            document.getElementById('opt-urgency-low').textContent = data.urgencyLow;
+
+            document.getElementById('lbl-details').childNodes[0].nodeValue = data.lblDetails + ' ';
+            document.getElementById('details').placeholder = data.placeholderDetails;
+
+            document.getElementById('btnText').textContent = data.btnSubmit;
+            document.getElementById('btn-modal-close').textContent = data.btnModalClose;
+            document.getElementById('txt-slogan').textContent = data.slogan;
+
+            // 4. Update Language Switcher Active States
+            ['ar', 'fr', 'en'].forEach(l => {
+                const btn = document.getElementById(`lang-${l}`);
+                if (l === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        async function submitForm(e) {
+            e.preventDefault();
+
+            const data = i18n[currentLang];
+
+            // Check if Google Script URL is missing
+            if (!SCRIPT_URL || SCRIPT_URL === "ضع_رابط_GOOGLE_SCRIPT_هنا") {
+                showModal('error', data.scriptNoticeTitle, data.scriptNoticeMsg);
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+            const btnSpinner = document.getElementById('btnSpinner');
+
+            // Set UI Loading State
+            submitBtn.disabled = true;
+            btnText.textContent = data.btnSubmitting;
+            btnIcon.classList.add('hidden');
+            btnSpinner.classList.remove('hidden');
+
+            const payload = {
+                fullName: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                wilaya: document.getElementById('wilaya').value,
+                email: document.getElementById('email').value || "N/A",
+                serviceType: document.getElementById('serviceType').value,
+                urgency: document.querySelector('input[name="urgency"]:checked').value,
+                details: document.getElementById('details').value,
+                lang: currentLang,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                showModal('success', data.successTitle, data.successMsg);
+                document.getElementById('serviceForm').reset();
+
+            } catch (err) {
+                console.error(err);
+                showModal('error', data.errorTitle, data.errorMsg);
+            } finally {
+                submitBtn.disabled = false;
+                btnText.textContent = data.btnSubmit;
+                btnIcon.classList.remove('hidden');
+                btnSpinner.classList.add('hidden');
+            }
+        }
+
+        // Modal Handler
+        function showModal(type, title, msg) {
+            const modal = document.getElementById('statusModal');
+            const modalIcon = document.getElementById('modalIcon');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMsg = document.getElementById('modalMsg');
+
+            if (type === 'success') {
+                modalIcon.className = "w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10";
+                modalIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+            } else {
+                modalIcon.className = "w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 bg-rose-500/20 text-rose-400 border border-rose-500/30 shadow-lg shadow-rose-500/10";
+                modalIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            }
+
+            modalTitle.textContent = title;
+            modalMsg.textContent = msg;
+
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.classList.add('opacity-100');
+        }
+
+        function closeStatusModal() {
+            const modal = document.getElementById('statusModal');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('pointer-events-none', 'opacity-0');
+        }
+
+        // Animated Particle Swarm Background
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.35;
+                this.vy = (Math.random() - 0.5) * 0.35;
+                this.radius = Math.random() * 1.5 + 0.8;
+                this.color = Math.random() > 0.5 ? '#00f2fe' : '#00e676';
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = 0.35;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 40; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 110) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = '#00f2fe';
+                        ctx.globalAlpha = (1 - dist / 110) * 0.12;
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // Initialize default language and particle loop on DOM load
+        window.onload = function() {
+            setLanguage('ar');
+            animate();
+        };
+    </script>
+</body>
+</html>
