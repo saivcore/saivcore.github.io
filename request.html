@@ -1,709 +1,333 @@
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-
-<!-- Font Awesome Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<!-- Tailwind CSS CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    cyber: {
-                        bg: '#090d16',
-                        card: 'rgba(18, 26, 43, 0.82)',
-                        border: 'rgba(0, 242, 254, 0.22)',
-                        cyan: '#00f2fe',
-                        green: '#00e676',
-                        purple: '#7928ca',
-                        accent: '#3b82f6'
-                    }
-                },
-                fontFamily: {
-                    sans: ['Tajawal', 'Plus Jakarta Sans', 'sans-serif'],
-                    en: ['Plus Jakarta Sans', 'sans-serif']
-                }
-            }
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلب خدمة - Request Form</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Cairo', 'Poppins', sans-serif;
         }
-    }
-</script>
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between p-4 sm:p-6">
 
-<style>
-    * {
-        box-sizing: border-box;
-        scroll-behavior: smooth;
-    }
-
-    body {
-        background-color: #090d16;
-        color: #f3f4f6;
-        font-family: 'Tajawal', 'Plus Jakarta Sans', sans-serif;
-        min-height: 100vh;
-        overflow-x: hidden;
-    }
-
-    /* Ambient background grid */
-    .cyber-grid {
-        background-size: 40px 40px;
-        background-image: 
-            linear-gradient(to right, rgba(0, 242, 254, 0.03) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
-    }
-
-    #bg-canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        pointer-events: none;
-    }
-
-    .glass-card {
-        background: rgba(18, 26, 43, 0.82);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border: 1px solid rgba(0, 242, 254, 0.22);
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), inset 0 0 20px rgba(0, 242, 254, 0.05);
-    }
-
-    .input-cyber {
-        background: rgba(9, 13, 22, 0.88);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        color: #ffffff;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .input-cyber:focus {
-        border-color: #00f2fe;
-        box-shadow: 0 0 20px rgba(0, 242, 254, 0.38);
-        outline: none;
-    }
-
-    .gradient-text {
-        background: linear-gradient(135deg, #ffffff 20%, #00f2fe 65%, #00e676 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .btn-glow {
-        background: linear-gradient(135deg, #00f2fe 0%, #00e676 100%);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .btn-glow:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0 30px rgba(0, 242, 254, 0.6);
-    }
-
-    .lang-btn {
-        transition: all 0.25s ease;
-    }
-
-    .lang-btn.active {
-        background: rgba(0, 242, 254, 0.2);
-        border-color: #00f2fe;
-        color: #00f2fe;
-        box-shadow: 0 0 14px rgba(0, 242, 254, 0.3);
-    }
-
-    .spinner {
-        border: 3px solid rgba(0, 0, 0, 0.2);
-        border-radius: 50%;
-        border-top: 3px solid #090d16;
-        width: 22px;
-        height: 22px;
-        animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    /* Responsive padding adjustments for directional icons */
-    html[dir="rtl"] .icon-pos { right: 1rem; left: auto; }
-    html[dir="ltr"] .icon-pos { left: 1rem; right: auto; }
-    html[dir="rtl"] .icon-chevron { left: 1rem; right: auto; }
-    html[dir="ltr"] .icon-chevron { right: 1rem; left: auto; }
-
-    html[dir="rtl"] .field-pad { padding-right: 2.8rem; padding-left: 1rem; }
-    html[dir="ltr"] .field-pad { padding-left: 2.8rem; padding-right: 1rem; }
-</style>
-
-
-<!-- Interactive Canvas Background -->
-<canvas id="bg-canvas"></canvas>
-
-<!-- Main Outer Wrapper -->
-<div class="w-full max-w-2xl z-10 my-4 sm:my-6">
-    
-    <!-- Header Bar -->
-    <div class="glass-card rounded-2xl p-3 sm:p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
+    <!-- Header / Language Switcher -->
+    <header class="max-w-xl mx-auto w-full flex justify-between items-center mb-6">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <img src="main/images/P logo.png" alt="Logo" class="h-12 w-auto object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=P';">
+        </div>
         
-        <!-- Logo & Brand Title -->
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="flex items-center gap-3 group">
-                <img src="https://saivcore.github.io/main/images/P%20logo.png" 
-                     alt="SaivCORE Logo" 
-                     onerror="this.onerror=null; this.src='https://saivcore.github.io/main/images/logo.png';"
-                     class="w-11 h-11 object-contain rounded-xl bg-gray-950/80 p-1 border border-cyan-500/40 group-hover:scale-105 transition-transform duration-300 shadow-lg shadow-cyan-500/20">
-                <div>
-                    <span class="font-extrabold text-xl text-white tracking-wide block leading-none">SaivCORE</span>
-                    <span class="text-[10px] text-cyan-400 font-mono tracking-wider">TECH ENTERPRISE</span>
-                </div>
-            </a>
+        <!-- Language Switcher -->
+        <div class="bg-slate-800 p-1 rounded-lg border border-slate-700 flex text-xs font-semibold">
+            <button onclick="setLanguage('ar')" id="btn-ar" class="px-3 py-1.5 rounded-md transition-all duration-200 bg-emerald-500 text-white">العربية</button>
+            <button onclick="setLanguage('fr')" id="btn-fr" class="px-3 py-1.5 rounded-md transition-all duration-200 text-slate-400 hover:text-white">Français</button>
+            <button onclick="setLanguage('en')" id="btn-en" class="px-3 py-1.5 rounded-md transition-all duration-200 text-slate-400 hover:text-white">English</button>
         </div>
+    </header>
 
-        <!-- Language Switcher Pills -->
-        <div class="flex items-center gap-1.5 bg-gray-950/80 p-1 rounded-xl border border-white/10 text-xs font-semibold">
-            <button onclick="setLanguage('ar')" id="lang-ar" class="lang-btn px-3 py-1.5 rounded-lg border border-transparent text-gray-300 hover:text-cyan-400">
-                العربية
-            </button>
-            <button onclick="setLanguage('fr')" id="lang-fr" class="lang-btn px-3 py-1.5 rounded-lg border border-transparent text-gray-300 hover:text-cyan-400">
-                Français
-            </button>
-            <button onclick="setLanguage('en')" id="lang-en" class="lang-btn px-3 py-1.5 rounded-lg border border-transparent text-gray-300 hover:text-cyan-400">
-                English
-            </button>
-        </div>
-
-        <!-- Online Badge -->
-        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-500/30 text-[11px] font-mono text-emerald-400">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span id="txt-status-online">SYSTEM ONLINE</span>
-        </div>
-    </div>
-
-    <!-- Service Request Form Card -->
-    <div class="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+    <!-- Main Card -->
+    <main class="max-w-xl mx-auto w-full bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
         
-        <!-- Glow Accent Orbs -->
-        <div class="absolute -top-24 -left-24 w-52 h-52 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -right-24 w-52 h-52 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
-        <!-- Form Card Header -->
-        <div class="text-center mb-8 relative">
-            <div class="inline-flex p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-3xl mb-3 shadow-lg shadow-cyan-500/15">
-                <i class="fa-solid fa-rocket"></i>
-            </div>
-            <h1 id="txt-title" class="text-2xl sm:text-3xl font-black gradient-text mb-2">طلب خدمة جديد</h1>
-            <p id="txt-subtitle" class="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
-                قم بملء البيانات وسنقوم بالتواصل معك لمباشرة تنفيذ مشروعك
-            </p>
+        <div class="text-center mb-6">
+            <h1 id="title" class="text-2xl font-bold text-emerald-400">طلب خدمة جديدة</h1>
+            <p id="subtitle" class="text-slate-400 text-sm mt-1">يرجى ملء الاستمارة لتقديم طلبك</p>
         </div>
 
-        <!-- Service Request Form -->
-        <form id="serviceForm" onsubmit="submitForm(event)" class="space-y-5">
+        <form id="requestForm" onsubmit="handleSubmit(event)" class="space-y-5">
             
             <!-- Full Name -->
             <div>
-                <label id="lbl-fullname" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
-                    الاسم واللقب <span class="text-cyan-400">*</span>
-                </label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 flex items-center text-cyan-400 pointer-events-none icon-pos">
-                        <i class="fa-regular fa-user"></i>
-                    </span>
-                    <input type="text" name="fullname" id="fullName" required 
-                           class="input-cyber w-full py-3.5 rounded-xl text-sm field-pad">
-                </div>
+                <label id="label-name" class="block text-sm font-medium mb-1 text-slate-300">الاسم الكامل *</label>
+                <input type="text" id="name" name="name" required class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-slate-100 placeholder-slate-500" placeholder="أدخل اسمك الكامل">
             </div>
 
-            <!-- Phone / WhatsApp & Wilaya Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- Phone / WhatsApp -->
-                <div>
-                    <label id="lbl-phone" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
-                        رقم الهاتف / واتساب <span class="text-cyan-400">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 flex items-center text-emerald-400 pointer-events-none icon-pos">
-                            <i class="fa-brands fa-whatsapp text-base"></i>
-                        </span>
-                        <input type="tel" name="phone" id="phone" required placeholder="0793390349" dir="ltr"
-                               class="input-cyber w-full py-3.5 rounded-xl text-sm field-pad text-start">
-                    </div>
-                </div>
-
-                <!-- Wilaya / City -->
-                <div>
-                    <label id="lbl-wilaya" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
-                        الولاية / المدينة <span class="text-cyan-400">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 flex items-center text-cyan-400 pointer-events-none icon-pos">
-                            <i class="fa-solid fa-location-dot"></i>
-                        </span>
-                        <input type="text" name="wilaya" id="wilaya" required 
-                               class="input-cyber w-full py-3.5 rounded-xl text-sm field-pad">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Email (Optional) -->
+            <!-- Phone Number -->
             <div>
-                <div class="flex items-center justify-between mb-1.5">
-                    <label id="lbl-email" class="text-xs sm:text-sm font-semibold text-gray-200">البريد الإلكتروني</label>
-                    <span id="lbl-optional" class="text-[11px] text-gray-400 font-normal">(اختياري)</span>
-                </div>
-                <div class="relative">
-                    <span class="absolute inset-y-0 flex items-center text-cyan-400 pointer-events-none icon-pos">
-                        <i class="fa-regular fa-envelope"></i>
-                    </span>
-                    <input type="email" name="email" id="email" placeholder="example@gmail.com" dir="ltr"
-                           class="input-cyber w-full py-3.5 rounded-xl text-sm field-pad text-start">
-                </div>
+                <label id="label-phone" class="block text-sm font-medium mb-1 text-slate-300">رقم الهاتف *</label>
+                <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-slate-100 placeholder-slate-500" placeholder="06XXXXXXXX">
             </div>
 
-            <!-- Service Type Selection -->
+            <!-- Service Selection (9 Services) -->
             <div>
-                <label id="lbl-service-type" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
-                    نوع الخدمة المطلوبة <span class="text-cyan-400">*</span>
-                </label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 flex items-center text-cyan-400 pointer-events-none icon-pos">
-                        <i class="fa-solid fa-screwdriver-wrench"></i>
-                    </span>
-                    <select name="service" id="serviceType" required class="input-cyber w-full py-3.5 rounded-xl text-sm appearance-none bg-gray-900/95 field-pad cursor-pointer">
-                        <!-- Populated dynamically via JS -->
-                    </select>
-                    <span class="absolute inset-y-0 flex items-center pointer-events-none text-gray-400 icon-chevron">
-                        <i class="fa-solid fa-chevron-down text-xs"></i>
-                    </span>
-                </div>
+                <label id="label-service" class="block text-sm font-medium mb-1 text-slate-300">اختر الخدمة المطلوبة *</label>
+                <select id="service" name="service" required class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-slate-100">
+                    <option value="" disabled selected id="opt-default">-- اختر خدمة --</option>
+                    <option value="Service 1" id="opt-s1">1. تطوير المواقع الإلكترونية</option>
+                    <option value="Service 2" id="opt-s2">2. تصميم الجرافيك والهويات البصرية</option>
+                    <option value="Service 3" id="opt-s3">3. التسويق والإعلانات الممولة</option>
+                    <option value="Service 4" id="opt-s4">4. إدارة صفحات التواصل الاجتماعي</option>
+                    <option value="Service 5" id="opt-s5">5. المونتاج وصناعة الفيديو</option>
+                    <option value="Service 6" id="opt-s6">6. الاستشارات التقنية</option>
+                    <option value="Service 7" id="opt-s7">7. كتابة المحتوى والترجمة</option>
+                    <option value="Service 8" id="opt-s8">8. تحسين محركات البحث (SEO)</option>
+                    <option value="Service 9" id="opt-s9">9. الدعم الفني والصيانة</option>
+                </select>
             </div>
 
-            <!-- Urgency Selector -->
+            <!-- Additional Details -->
             <div>
-                <label id="lbl-urgency" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-2">درجة الاستعجال</label>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                    <label class="cursor-pointer">
-                        <input type="radio" name="urgency" value="🔴 مستعجل جداً" class="peer hidden">
-                        <div class="p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-center text-xs font-semibold text-gray-300 peer-checked:border-rose-500 peer-checked:bg-rose-500/15 peer-checked:text-rose-400 transition-all hover:border-gray-700">
-                            <span id="opt-urgency-high">🔴 مستعجل جداً</span>
-                        </div>
-                    </label>
-                    <label class="cursor-pointer">
-                        <input type="radio" name="urgency" value="🟡 متوسط" checked class="peer hidden">
-                        <div class="p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-center text-xs font-semibold text-gray-300 peer-checked:border-amber-500 peer-checked:bg-amber-500/15 peer-checked:text-amber-400 transition-all hover:border-gray-700">
-                            <span id="opt-urgency-medium">🟡 متوسط</span>
-                        </div>
-                    </label>
-                    <label class="cursor-pointer">
-                        <input type="radio" name="urgency" value="🟢 غير مستعجل" class="peer hidden">
-                        <div class="p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-center text-xs font-semibold text-gray-300 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/15 peer-checked:text-emerald-400 transition-all hover:border-gray-700">
-                            <span id="opt-urgency-low">🟢 غير مستعجل</span>
-                        </div>
-                    </label>
-                </div>
+                <label id="label-notes" class="block text-sm font-medium mb-1 text-slate-300">تفاصيل إضافية (اختياري)</label>
+                <textarea id="notes" name="notes" rows="3" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-slate-100 placeholder-slate-500" placeholder="اكتب أي ملاحظات أو تفاصيل إضافية..."></textarea>
             </div>
-
-            <!-- Description Field -->
-            <div>
-                <label id="lbl-details" class="block text-xs sm:text-sm font-semibold text-gray-200 mb-1.5">
-                    تفاصيل المشكلة أو المشروع <span class="text-cyan-400">*</span>
-                </label>
-                <textarea name="details" id="details" rows="4" required 
-                          class="input-cyber w-full p-3.5 rounded-xl text-sm resize-none"></textarea>
-            </div>
-
-            <!-- Hidden Language Code -->
-            <input type="hidden" name="lang" id="langInput" value="ar">
 
             <!-- Submit Button -->
-            <button type="submit" id="submitBtn" class="btn-glow w-full py-4 rounded-xl text-gray-950 font-extrabold text-base flex items-center justify-center gap-2 shadow-xl mt-4 cursor-pointer">
-                <span id="btnText">إرسال الطلب الآن</span>
-                <i id="btnIcon" class="fa-solid fa-paper-plane"></i>
-                <div id="btnSpinner" class="spinner hidden"></div>
+            <button type="submit" id="btn-submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center space-x-2 space-x-reverse">
+                <span id="txt-submit">إرسال الطلب</span>
+                <i class="fas fa-paper-plane text-sm"></i>
             </button>
-
         </form>
-    </div>
 
-    <!-- Footer Info -->
-    <div class="text-center text-xs text-gray-400 mt-6 space-y-1">
-        <p>© 2026 <span class="text-cyan-400 font-bold">SaivCORE</span> — <span id="txt-slogan">Building digital sovereignty with Algerian code</span> 🇩🇿</p>
-    </div>
+        <!-- Status Messages -->
+        <div id="statusModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
+                
+                <!-- Success State -->
+                <div id="stateSuccess" class="hidden space-y-3">
+                    <div class="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-3xl border border-emerald-500/20">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 id="msg-success-title" class="text-xl font-bold text-white">الطلب فات بنجاح!</h3>
+                    <p id="msg-success-desc" class="text-slate-300 text-sm">تم استلام طلبك بنجاح وستتم معالجته في أقرب وقت.</p>
+                    <button onclick="closeModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 rounded-xl transition">إغلاق</button>
+                </div>
 
-</div>
+                <!-- Error State -->
+                <div id="stateError" class="hidden space-y-3">
+                    <div class="w-16 h-16 bg-rose-500/10 text-rose-400 rounded-full flex items-center justify-center mx-auto text-3xl border border-rose-500/20">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 id="msg-error-title" class="text-xl font-bold text-white">الطلب ما فاتش!</h3>
+                    <p id="msg-error-desc" class="text-slate-300 text-sm">حدث خطأ أثناء إرسال البيانات. يمكنك التواصل معنا مباشرة عبر واتساب.</p>
+                    <div class="flex flex-col gap-2 pt-2">
+                        <a id="btn-whatsapp" href="https://wa.me/213000000000" target="_blank" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 space-x-reverse">
+                            <i class="fab fa-whatsapp text-lg"></i>
+                            <span id="txt-whatsapp">التواصل عبر واتساب</span>
+                        </a>
+                        <button onclick="closeModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm py-2 rounded-xl transition">إغلاق</button>
+                    </div>
+                </div>
 
-<!-- Status Modal Dialog (Message Fat / Message Mafatch) -->
-<div id="statusModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="glass-card max-w-sm w-full p-6 sm:p-7 rounded-3xl text-center flex flex-col items-center shadow-2xl relative border border-cyan-500/40">
-        <div id="modalIcon" class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4"></div>
-        <h3 id="modalTitle" class="text-xl font-bold text-white mb-2"></h3>
-        <p id="modalMsg" class="text-xs sm:text-sm text-gray-300 mb-6 leading-relaxed"></p>
-        
-        <div id="modalActions" class="w-full flex flex-col gap-2">
-            <button onclick="closeStatusModal()" id="btn-modal-close" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm transition-colors cursor-pointer border border-white/10">
-                موافق
-            </button>
+            </div>
         </div>
-    </div>
-</div>
+    </main>
 
-<script>
-    // 🔗 رابط GOOGLE APPS SCRIPT المباشر والمفعل
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby12feoPBrFpsk-LqLoT_lozc8gM_TehtVLgfFsW8QudBb5flfnIZ69KNiTryM-VJhrLg/exec";
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 text-xs mt-6">
+        &copy; <span id="year"></span> All Rights Reserved.
+    </footer>
 
-    // Complete Dictionary (AR, FR, EN)
-    const i18n = {
-        ar: {
-            dir: "rtl",
-            lang: "ar",
-            statusOnline: "النظام متصل",
-            title: "طلب خدمة جديد",
-            subtitle: "قم بملء البيانات وسنقوم بالتواصل معك لمباشرة تنفيذ مشروعك",
-            lblName: "الاسم واللقب",
-            placeholderName: "مثال: سيف الإسلام",
-            lblPhone: "رقم الهاتف / واتساب",
-            lblWilaya: "الولاية / المدينة",
-            placeholderWilaya: "مثال: وهران",
-            lblEmail: "البريد الإلكتروني",
-            lblOptional: "(اختياري)",
-            lblServiceType: "نوع الخدمة المطلوبة",
-            selectPrompt: "اختر الخدمة المطلوبة من القائمة...",
-            services: [
-                "🛠️ Maintenance Hardware — صيانة العتاد (إصلاح حواسيب، تغيير قطع الغيار)",
-                "💻 Maintenance Software — صيانة البرمجيات (فورماتاج، تثبيت ويندوز / لينكس)",
-                "📦 Application Setup — تثبيت جميع البرامج والتطبيقات مع التفعيل الكامل",
-                "📄 Research & Thesis — إعداد وتنسيق وطباعة المذكرات والبحوث",
-                "🎨 Graphic Design — تصميم جرافيكي (شعارات، فلاير، بطاقات عمل، منشورات)",
-                "🎬 Video Production — فيديو إشهاري وإعلاني احترافي",
-                "🌐 Web Solutions — تطوير المواقع والحلول الإلكترونية",
-                "🖥️ Desktop Apps — تطوير تطبيقات وبرامج الحواسيب",
-                "❓ Autres Services — خدمات واستشارات تقنية أخرى..."
-            ],
-            lblUrgency: "درجة الاستعجال",
-            urgencyHigh: "🔴 مستعجل جداً (24-48 ساعة)",
-            urgencyMedium: "🟡 متوسط (خلال هذا الأسبوع)",
-            urgencyLow: "🟢 غير مستعجل",
-            lblDetails: "تفاصيل المشكلة أو المشروع",
-            placeholderDetails: "اكتب لنا تفاصيل مشروعك أو ما تحتاجه بالضبط...",
-            btnSubmit: "إرسال الطلب الآن",
-            btnSubmitting: "جاري الإرسال...",
-            btnModalClose: "موافق",
-            slogan: "بناء السيادة الرقمية بأيادٍ برمجية جزائرية",
-            
-            // Message Statuses
-            successTitle: "تم إرسال طلبك بنجاح! 🚀 (Message Fat)",
-            successMsg: "وصلنا طلبك بنجاح وسنتواصل معك فورا عبر الهاتف أو الواتساب. تم إرسال إشعار للبريد الإلكتروني.",
-            errorTitle: "لم يتم الإرسال ❌ (Message Mafatch)",
-            errorMsg: "تأكد من اتصال الإنترنت وحاول مجدداً، أو تواصل معنا مباشرة عبر الواتساب."
-        },
-        fr: {
-            dir: "ltr",
-            lang: "fr",
-            statusOnline: "SYSTÈME EN LIGNE",
-            title: "Demande de Service",
-            subtitle: "Remplissez le formulaire et nous vous contacterons pour démarrer votre projet",
-            lblName: "Nom et Prénom",
-            placeholderName: "ex: Saif El Islam",
-            lblPhone: "N° Téléphone / WhatsApp",
-            lblWilaya: "Wilaya / Ville",
-            placeholderWilaya: "ex: Oran",
-            lblEmail: "Adresse Email",
-            lblOptional: "(Optionnel)",
-            lblServiceType: "Type de service requis",
-            selectPrompt: "Sélectionnez un service dans la liste...",
-            services: [
-                "🛠️ Maintenance Hardware (Réparation PC, pièces de rechange)",
-                "💻 Maintenance Software (Formatage, installation OS Win/Linux)",
-                "📦 Application Setup (Installation & activation logiciels)",
-                "📄 Research & Thesis (Mise en page & impression mémoires)",
-                "🎨 Graphic Design (Logos, flyers, cartes de visite, social media)",
-                "🎬 Video Production (Vidéo publicitaire & promotionnelle)",
-                "🌐 Web Solutions (Développement Web sur mesure)",
-                "🖥️ Desktop Apps (Développement d'applications PC)",
-                "❓ Autres Services (Autres services & consultations)"
-            ],
-            lblUrgency: "Niveau d'urgence",
-            urgencyHigh: "🔴 Très urgent (24-48h)",
-            urgencyMedium: "🟡 Moyen (cette semaine)",
-            urgencyLow: "🟢 Normal / Non urgent",
-            lblDetails: "Détails du projet ou du problème",
-            placeholderDetails: "Décrivez les détails de votre projet ou votre besoin exact...",
-            btnSubmit: "Envoyer la demande",
-            btnSubmitting: "Envoi en cours...",
-            btnModalClose: "D'accord",
-            slogan: "Bâtir la souveraineté numérique par le code algérien",
-            
-            // Message Statuses
-            successTitle: "Demande envoyée avec succès ! 🚀",
-            successMsg: "Votre demande a bien été reçue et enregistrée. Nous vous contacterons sous peu par téléphone ou WhatsApp.",
-            errorTitle: "Échec de l'envoi ❌",
-            errorMsg: "Impossible d'envoyer la demande. Vérifiez votre connexion internet ou contactez-nous directement via WhatsApp."
-        },
-        en: {
-            dir: "ltr",
-            lang: "en",
-            statusOnline: "SYSTEM ONLINE",
-            title: "New Service Request",
-            subtitle: "Fill out the form and we will reach out to start your project",
-            lblName: "Full Name",
-            placeholderName: "e.g., Saif El Islam",
-            lblPhone: "Phone / WhatsApp Number",
-            lblWilaya: "State / City / Wilaya",
-            placeholderWilaya: "e.g., Oran",
-            lblEmail: "Email Address",
-            lblOptional: "(Optional)",
-            lblServiceType: "Requested Service Type",
-            selectPrompt: "Choose a service from the list...",
-            services: [
-                "🛠️ Hardware Maintenance (PC repair, parts replacement)",
-                "💻 Software Maintenance (Formatting, OS setup Windows/Linux)",
-                "📦 Application Setup (Software installation & activation)",
-                "📄 Research & Thesis (Thesis formatting & printing)",
-                "🎨 Graphic Design (Logos, flyers, business cards, posts)",
-                "🎬 Video Production (Commercial & promotional video)",
-                "🌐 Web Solutions (Custom Web development & solutions)",
-                "🖥️ Desktop Apps (PC Desktop Application Development)",
-                "❓ Other Services (Other IT services & consultations)"
-            ],
-            lblUrgency: "Urgency Level",
-            urgencyHigh: "🔴 Very Urgent (24-48 hours)",
-            urgencyMedium: "🟡 Medium (Within this week)",
-            urgencyLow: "🟢 Normal / Not Urgent",
-            lblDetails: "Project or Issue Details",
-            placeholderDetails: "Describe the details of your project or specific requirements...",
-            btnSubmit: "Submit Request Now",
-            btnSubmitting: "Submitting...",
-            btnModalClose: "Got it",
-            slogan: "Building digital sovereignty with Algerian code",
-            
-            // Message Statuses
-            successTitle: "Request Sent Successfully! 🚀",
-            successMsg: "Your request was received and logged. We will contact you shortly via Phone or WhatsApp.",
-            errorTitle: "Submission Failed ❌",
-            errorMsg: "Unable to send request. Please check your internet connection or contact us directly on WhatsApp."
-        }
-    };
+    <!-- Script Section -->
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby12feoPBrFpsk-LqLoT_lozc8gM_TehtVLgfFsW8QudBb5flfnIZ69KNiTryM-VJhrLg/exec";
+        const WHATSAPP_NUMBER = "213000000000"; // يمكنك تغيير الرقم هنا
 
-    let currentLang = 'ar';
+        document.getElementById('year').innerText = new Date().getFullYear();
 
-    // Language Switcher Function
-    function setLanguage(lang) {
-        if (!i18n[lang]) return;
-        currentLang = lang;
-        const data = i18n[lang];
+        const translations = {
+            ar: {
+                dir: 'rtl',
+                title: 'طلب خدمة جديدة',
+                subtitle: 'يرجى ملء الاستمارة لتقديم طلبك',
+                nameLabel: 'الاسم الكامل *',
+                namePlaceholder: 'أدخل اسمك الكامل',
+                phoneLabel: 'رقم الهاتف *',
+                phonePlaceholder: '06XXXXXXXX',
+                serviceLabel: 'اختر الخدمة المطلوبة *',
+                serviceDefault: '-- اختر خدمة --',
+                notesLabel: 'تفاصيل إضافية (اختياري)',
+                notesPlaceholder: 'اكتب أي ملاحظات أو تفاصيل إضافية...',
+                submitBtn: 'إرسال الطلب',
+                successTitle: 'الطلب فات بنجاح! (Message Fat)',
+                successDesc: 'شكراً لك! تم تسليم طلبك بنجاح وستصلك استجابتنا قريباً.',
+                errorTitle: 'الطلب ما فاتش! (Message Mafatch)',
+                errorDesc: 'تعذر إرسال الطلب حالياً. يمكنكم تحويل الطلب أو التواصل معنا مباشرة عبر واتساب.',
+                whatsappBtn: 'التواصل عبر واتساب',
+                services: [
+                    '1. تطوير المواقع الإلكترونية',
+                    '2. تصميم الجرافيك والهويات البصرية',
+                    '3. التسويق والإعلانات الممولة',
+                    '4. إدارة صفحات التواصل الاجتماعي',
+                    '5. المونتاج وصناعة الفيديو',
+                    '6. الاستشارات التقنية',
+                    '7. كتابة المحتوى والترجمة',
+                    '8. تحسين محركات البحث (SEO)',
+                    '9. الدعم الفني والصيانة'
+                ]
+            },
+            fr: {
+                dir: 'ltr',
+                title: 'Demander un Service',
+                subtitle: 'Veuillez remplir le formulaire ci-dessous',
+                nameLabel: 'Nom Complet *',
+                namePlaceholder: 'Votre nom complet',
+                phoneLabel: 'Numéro de Téléphone *',
+                phonePlaceholder: '06XXXXXXXX',
+                serviceLabel: 'Sélectionner le Service *',
+                serviceDefault: '-- Choisir un service --',
+                notesLabel: 'Détails Supplémentaires (Optionnel)',
+                notesPlaceholder: 'Écrivez vos remarques ici...',
+                submitBtn: 'Envoyer la Demande',
+                successTitle: 'Demande envoyée avec succès !',
+                successDesc: 'Merci ! Votre demande a été reçue et sera traitée rapidement.',
+                errorTitle: 'Échec de l\'envoi !',
+                errorDesc: 'Impossible d\'envoyer votre demande. Vous pouvez nous contacter sur WhatsApp.',
+                whatsappBtn: 'Contacter sur WhatsApp',
+                services: [
+                    '1. Développement Web',
+                    '2. Design Graphique & Identité',
+                    '3. Marketing & Publicité',
+                    '4. Gestion des Réseaux Sociaux',
+                    '5. Montage Vidéo',
+                    '6. Conseil Technique',
+                    '7. Rédaction & Traduction',
+                    '8. Référencement (SEO)',
+                    '9. Support Technique & Maintenance'
+                ]
+            },
+            en: {
+                dir: 'ltr',
+                title: 'Request a Service',
+                subtitle: 'Please fill out the form below',
+                nameLabel: 'Full Name *',
+                namePlaceholder: 'Enter your full name',
+                phoneLabel: 'Phone Number *',
+                phonePlaceholder: '06XXXXXXXX',
+                serviceLabel: 'Select Service *',
+                serviceDefault: '-- Select a service --',
+                notesLabel: 'Additional Details (Optional)',
+                notesPlaceholder: 'Write any notes or requirements...',
+                submitBtn: 'Submit Request',
+                successTitle: 'Request Sent Successfully!',
+                successDesc: 'Thank you! Your request has been received and will be processed soon.',
+                errorTitle: 'Submission Failed!',
+                errorDesc: 'Could not send request right now. Feel free to reach out via WhatsApp.',
+                whatsappBtn: 'Contact via WhatsApp',
+                services: [
+                    '1. Web Development',
+                    '2. Graphic Design & Branding',
+                    '3. Marketing & Ads',
+                    '4. Social Media Management',
+                    '5. Video Editing',
+                    '6. Technical Consulting',
+                    '7. Content Writing & Translation',
+                    '8. Search Engine Optimization (SEO)',
+                    '9. Technical Support & Maintenance'
+                ]
+            }
+        };
 
-        document.documentElement.setAttribute('dir', data.dir);
-        document.documentElement.setAttribute('lang', data.lang);
-        document.getElementById('langInput').value = lang;
+        let currentLang = 'ar';
 
-        // Text Updates
-        document.getElementById('txt-status-online').textContent = data.statusOnline;
-        document.getElementById('txt-title').textContent = data.title;
-        document.getElementById('txt-subtitle').textContent = data.subtitle;
+        function setLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
 
-        document.getElementById('lbl-fullname').childNodes[0].nodeValue = data.lblName + ' ';
-        document.getElementById('fullName').placeholder = data.placeholderName;
+            document.documentElement.dir = t.dir;
+            document.documentElement.lang = lang;
 
-        document.getElementById('lbl-phone').childNodes[0].nodeValue = data.lblPhone + ' ';
-        document.getElementById('lbl-wilaya').childNodes[0].nodeValue = data.lblWilaya + ' ';
-        document.getElementById('wilaya').placeholder = data.placeholderWilaya;
-
-        document.getElementById('lbl-email').textContent = data.lblEmail;
-        document.getElementById('lbl-optional').textContent = data.lblOptional;
-
-        document.getElementById('lbl-service-type').childNodes[0].nodeValue = data.lblServiceType + ' ';
-        
-        // Re-populate Dropdown
-        const select = document.getElementById('serviceType');
-        const currentSelected = select.value;
-        select.innerHTML = `<option value="" disabled ${!currentSelected ? 'selected' : ''}>${data.selectPrompt}</option>`;
-        
-        data.services.forEach((serviceText) => {
-            const opt = document.createElement('option');
-            opt.value = serviceText;
-            opt.textContent = serviceText;
-            if (currentSelected === serviceText) opt.selected = true;
-            select.appendChild(opt);
-        });
-
-        document.getElementById('lbl-urgency').textContent = data.lblUrgency;
-        document.getElementById('opt-urgency-high').textContent = data.urgencyHigh;
-        document.getElementById('opt-urgency-medium').textContent = data.urgencyMedium;
-        document.getElementById('opt-urgency-low').textContent = data.urgencyLow;
-
-        document.getElementById('lbl-details').childNodes[0].nodeValue = data.lblDetails + ' ';
-        document.getElementById('details').placeholder = data.placeholderDetails;
-
-        document.getElementById('btnText').textContent = data.btnSubmit;
-        document.getElementById('btn-modal-close').textContent = data.btnModalClose;
-        document.getElementById('txt-slogan').textContent = data.slogan;
-
-        // Switch active buttons
-        ['ar', 'fr', 'en'].forEach(l => {
-            const btn = document.getElementById(`lang-${l}`);
-            if (l === lang) btn.classList.add('active');
-            else btn.classList.remove('active');
-        });
-    }
-
-    // Form Submit Handler
-    async function submitForm(e) {
-        e.preventDefault();
-        const data = i18n[currentLang];
-
-        const submitBtn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
-        const btnIcon = document.getElementById('btnIcon');
-        const btnSpinner = document.getElementById('btnSpinner');
-
-        // Set Loading UI
-        submitBtn.disabled = true;
-        btnText.textContent = data.btnSubmitting;
-        btnIcon.classList.add('hidden');
-        btnSpinner.classList.remove('hidden');
-
-        const form = document.getElementById('serviceForm');
-        const formData = new FormData(form);
-        const searchParams = new URLSearchParams(formData);
-
-        try {
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: searchParams
+            // Toggle active lang buttons
+            ['ar', 'fr', 'en'].forEach(l => {
+                const btn = document.getElementById(`btn-${l}`);
+                if (l === lang) {
+                    btn.className = "px-3 py-1.5 rounded-md transition-all duration-200 bg-emerald-500 text-white font-bold";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-md transition-all duration-200 text-slate-400 hover:text-white";
+                }
             });
 
-            const result = await response.json();
+            // Update Labels & Text
+            document.getElementById('title').innerText = t.title;
+            document.getElementById('subtitle').innerText = t.subtitle;
+            document.getElementById('label-name').innerText = t.nameLabel;
+            document.getElementById('name').placeholder = t.namePlaceholder;
+            document.getElementById('label-phone').innerText = t.phoneLabel;
+            document.getElementById('phone').placeholder = t.phonePlaceholder;
+            document.getElementById('label-service').innerText = t.serviceLabel;
+            document.getElementById('opt-default').innerText = t.serviceDefault;
+            document.getElementById('label-notes').innerText = t.notesLabel;
+            document.getElementById('notes').placeholder = t.notesPlaceholder;
+            document.getElementById('txt-submit').innerText = t.submitBtn;
 
-            if (result.status === 'success') {
-                showModal('success', data.successTitle, data.successMsg);
-                form.reset();
-                setLanguage(currentLang); // Reset dropdown prompt
-            } else {
-                showModal('error', data.errorTitle, data.errorMsg);
-            }
+            // Modal texts
+            document.getElementById('msg-success-title').innerText = t.successTitle;
+            document.getElementById('msg-success-desc').innerText = t.successDesc;
+            document.getElementById('msg-error-title').innerText = t.errorTitle;
+            document.getElementById('msg-error-desc').innerText = t.errorDesc;
+            document.getElementById('txt-whatsapp').innerText = t.whatsappBtn;
 
-        } catch (err) {
-            console.error("Submission Error:", err);
-            showModal('error', data.errorTitle, data.errorMsg);
-        } finally {
-            submitBtn.disabled = false;
-            btnText.textContent = data.btnSubmit;
-            btnIcon.classList.remove('hidden');
-            btnSpinner.classList.add('hidden');
+            // Options text
+            t.services.forEach((s, idx) => {
+                document.getElementById(`opt-s${idx+1}`).innerText = s;
+            });
         }
-    }
 
-    // Show Modal Dialog
-    function showModal(type, title, msg) {
-        const modal = document.getElementById('statusModal');
-        const modalIcon = document.getElementById('modalIcon');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalMsg = document.getElementById('modalMsg');
-        const modalActions = document.getElementById('modalActions');
-
-        if (type === 'success') {
-            modalIcon.className = "w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10";
-            modalIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-            modalActions.innerHTML = `
-                <button onclick="closeStatusModal()" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-extrabold text-sm transition-colors cursor-pointer shadow-lg shadow-emerald-500/20">
-                    ${i18n[currentLang].btnModalClose}
-                </button>
-            `;
-        } else {
-            modalIcon.className = "w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 bg-rose-500/20 text-rose-400 border border-rose-500/30 shadow-lg shadow-rose-500/10";
-            modalIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('btn-submit');
+            const submitTxt = document.getElementById('txt-submit');
             
-            // Add Direct WhatsApp Button fallback in case message didn't pass
-            const phoneNum = document.getElementById('phone').value || '0793390349';
-            modalActions.innerHTML = `
-                <a href="https://wa.me/213793390349?text=السلام عليكم، أود التواصل معكم بشأن طلب خدمة SaivCORE" target="_blank" 
-                   class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors">
-                    <i class="fa-brands fa-whatsapp text-lg"></i> إرسال عبر WhatsApp مباشرة
-                </a>
-                <button onclick="closeStatusModal()" class="w-full py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold text-xs transition-colors cursor-pointer border border-white/10">
-                    ${i18n[currentLang].btnModalClose}
-                </button>
-            `;
-        }
+            // Disable button during submission
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            submitTxt.innerText = currentLang === 'ar' ? 'جاري الإرسال...' : (currentLang === 'fr' ? 'Envoi en cours...' : 'Sending...');
 
-        modalTitle.textContent = title;
-        modalMsg.textContent = msg;
+            const formData = new FormData(document.getElementById('requestForm'));
+            formData.append('language', currentLang);
 
-        modal.classList.remove('pointer-events-none', 'opacity-0');
-        modal.classList.add('opacity-100');
-    }
+            try {
+                // Fetch with no-cors / mode handle
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
 
-    function closeStatusModal() {
-        const modal = document.getElementById('statusModal');
-        modal.classList.remove('opacity-100');
-        modal.classList.add('pointer-events-none', 'opacity-0');
-    }
-
-    // Animated Swarm Background Canvas
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let width, height, particles = [];
-
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    class Particle {
-        constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.vx = (Math.random() - 0.5) * 0.4;
-            this.vy = (Math.random() - 0.5) * 0.4;
-            this.radius = Math.random() * 1.5 + 0.8;
-            this.color = Math.random() > 0.5 ? '#00f2fe' : '#00e676';
-        }
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-            if (this.x < 0 || this.x > width) this.vx *= -1;
-            if (this.y < 0 || this.y > height) this.vy *= -1;
-        }
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = this.color;
-            ctx.globalAlpha = 0.4;
-            ctx.fill();
-        }
-    }
-
-    for (let i = 0; i < 45; i++) particles.push(new Particle());
-
-    function animate() {
-        ctx.clearRect(0, 0, width, height);
-        for (let i = 0; i < particles.length; i++) {
-            particles[i].update();
-            particles[i].draw();
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 110) {
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = '#00f2fe';
-                    ctx.globalAlpha = (1 - dist / 110) * 0.12;
-                    ctx.stroke();
-                }
+                // Show success modal
+                showModal(true);
+                document.getElementById('requestForm').reset();
+            } catch (err) {
+                console.error("Submission Error:", err);
+                // Show error modal with WhatsApp Option
+                showModal(false);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                submitTxt.innerText = translations[currentLang].submitBtn;
             }
         }
-        requestAnimationFrame(animate);
-    }
 
-    // Initialize default UI & Canvas
-    window.onload = function() {
-        setLanguage('ar');
-        animate();
-    };
-</script>
+        function showModal(isSuccess) {
+            const modal = document.getElementById('statusModal');
+            const successState = document.getElementById('stateSuccess');
+            const errorState = document.getElementById('stateError');
+
+            modal.classList.remove('hidden');
+
+            if (isSuccess) {
+                successState.classList.remove('hidden');
+                errorState.classList.add('hidden');
+            } else {
+                errorState.classList.remove('hidden');
+                successState.classList.add('hidden');
+
+                // Build custom WhatsApp message with form values
+                const nameVal = document.getElementById('name').value;
+                const phoneVal = document.getElementById('phone').value;
+                const serviceVal = document.getElementById('service').value;
+                const notesVal = document.getElementById('notes').value;
+
+                const textMsg = encodeURIComponent(`سلام، حاولنا نبعثو طلب وما فاتش:\n- الاسم: ${nameVal}\n- الهاتف: ${phoneVal}\n- الخدمة: ${serviceVal}\n- تفاصيل: ${notesVal}`);
+                document.getElementById('btn-whatsapp').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${textMsg}`;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('statusModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
