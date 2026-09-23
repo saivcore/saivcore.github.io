@@ -1,333 +1,838 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>طلب خدمة - Request Form</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;600;700&display=swap');
-        body {
-            font-family: 'Cairo', 'Poppins', sans-serif;
-        }
-    </style>
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between p-4 sm:p-6">
+    body {
+        font-family: 'Cairo', 'Plus Jakarta Sans', sans-serif;
+        background: radial-gradient(circle at top right, #0f172a, #020617);
+    }
 
-    <!-- Header / Language Switcher -->
-    <header class="max-w-xl mx-auto w-full flex justify-between items-center mb-6">
-        <div class="flex items-center space-x-3 space-x-reverse">
-            <img src="main/images/P logo.png" alt="Logo" class="h-12 w-auto object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=P';">
+    .glass-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .service-card input:checked + div {
+        border-color: #10b981;
+        background: rgba(16, 185, 129, 0.12);
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+    }
+
+    .service-card input:checked + div .icon-box {
+        background-color: #10b981;
+        color: #ffffff;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #10b981;
+    }
+</style>
+
+
+<!-- Top Header -->
+<header class="max-w-3xl mx-auto w-full flex justify-between items-center mb-8 bg-slate-900/60 p-4 rounded-2xl border border-slate-800/80 backdrop-blur-md">
+    <div class="flex items-center space-x-3 space-x-reverse">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+            <i class="fas fa-layer-group text-white text-lg"></i>
+        </div>
+        <div>
+            <span class="font-black text-lg text-white tracking-wide block leading-none">PRO SERVICE</span>
+            <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Request Portal</span>
+        </div>
+    </div>
+    
+    <!-- Language Switcher & Save Status -->
+    <div class="flex items-center gap-3">
+        <span id="draft-status" class="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700/50">
+            <i class="fas fa-check-circle text-brand-500 text-[10px]"></i>
+            <span id="txt-draft-saved">مسودة محفوظة</span>
+        </span>
+
+        <div class="bg-slate-950 p-1 rounded-xl border border-slate-800 flex text-xs font-bold">
+            <button onclick="setLanguage('ar')" id="btn-ar" class="px-3 py-1.5 rounded-lg transition-all duration-200 bg-brand-500 text-white shadow-md">العربية</button>
+            <button onclick="setLanguage('fr')" id="btn-fr" class="px-3 py-1.5 rounded-lg transition-all duration-200 text-slate-400 hover:text-white">Français</button>
+            <button onclick="setLanguage('en')" id="btn-en" class="px-3 py-1.5 rounded-lg transition-all duration-200 text-slate-400 hover:text-white">English</button>
+        </div>
+    </div>
+</header>
+
+<!-- Main Card Container -->
+<main class="max-w-3xl mx-auto w-full glass-card rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden my-auto">
+    
+    <!-- Glow accents -->
+    <div class="absolute -top-24 -right-24 w-60 h-60 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-60 h-60 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Section Title -->
+    <div class="text-center mb-8 relative z-10">
+        <h1 id="main-title" class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-brand-400">
+            تقديم طلب خدمة جديدة
+        </h1>
+        <p id="main-subtitle" class="text-slate-400 text-sm mt-2 max-w-md mx-auto">
+            اختر الخدمة المناسبة وعبر عن متطلباتك للبدء في تنفيذ مشروعك بأعلى جودة.
+        </p>
+    </div>
+
+    <!-- Stepper Header -->
+    <div class="flex items-center justify-between max-w-md mx-auto mb-10 relative z-10 px-4">
+        <div class="flex flex-col items-center gap-2">
+            <div id="step1-circle" class="w-10 h-10 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shadow-lg shadow-brand-500/30 transition-all duration-300">
+                1
+            </div>
+            <span id="step1-label" class="text-xs font-bold text-brand-400">المعلومات الشخصية</span>
         </div>
         
-        <!-- Language Switcher -->
-        <div class="bg-slate-800 p-1 rounded-lg border border-slate-700 flex text-xs font-semibold">
-            <button onclick="setLanguage('ar')" id="btn-ar" class="px-3 py-1.5 rounded-md transition-all duration-200 bg-emerald-500 text-white">العربية</button>
-            <button onclick="setLanguage('fr')" id="btn-fr" class="px-3 py-1.5 rounded-md transition-all duration-200 text-slate-400 hover:text-white">Français</button>
-            <button onclick="setLanguage('en')" id="btn-en" class="px-3 py-1.5 rounded-md transition-all duration-200 text-slate-400 hover:text-white">English</button>
-        </div>
-    </header>
+        <div id="step-line" class="flex-1 h-1 bg-slate-700 mx-3 rounded-full transition-all duration-500"></div>
 
-    <!-- Main Card -->
-    <main class="max-w-xl mx-auto w-full bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        <div class="flex flex-col items-center gap-2">
+            <div id="step2-circle" class="w-10 h-10 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-bold flex items-center justify-center transition-all duration-300">
+                2
+            </div>
+            <span id="step2-label" class="text-xs font-medium text-slate-500">تفاصيل الخدمة</span>
+        </div>
+    </div>
+
+    <!-- FORM START -->
+    <form id="requestForm" onsubmit="handleSubmit(event)" class="space-y-6 relative z-10">
         
-        <div class="text-center mb-6">
-            <h1 id="title" class="text-2xl font-bold text-emerald-400">طلب خدمة جديدة</h1>
-            <p id="subtitle" class="text-slate-400 text-sm mt-1">يرجى ملء الاستمارة لتقديم طلبك</p>
-        </div>
-
-        <form id="requestForm" onsubmit="handleSubmit(event)" class="space-y-5">
+        <!-- STEP 1: Personal Information -->
+        <div id="step-1" class="space-y-5 transition-all duration-300">
             
-            <!-- Full Name -->
-            <div>
-                <label id="label-name" class="block text-sm font-medium mb-1 text-slate-300">الاسم الكامل *</label>
-                <input type="text" id="name" name="name" required class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-slate-100 placeholder-slate-500" placeholder="أدخل اسمك الكامل">
-            </div>
-
-            <!-- Phone Number -->
-            <div>
-                <label id="label-phone" class="block text-sm font-medium mb-1 text-slate-300">رقم الهاتف *</label>
-                <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-slate-100 placeholder-slate-500" placeholder="06XXXXXXXX">
-            </div>
-
-            <!-- Service Selection (9 Services) -->
-            <div>
-                <label id="label-service" class="block text-sm font-medium mb-1 text-slate-300">اختر الخدمة المطلوبة *</label>
-                <select id="service" name="service" required class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-slate-100">
-                    <option value="" disabled selected id="opt-default">-- اختر خدمة --</option>
-                    <option value="Service 1" id="opt-s1">1. تطوير المواقع الإلكترونية</option>
-                    <option value="Service 2" id="opt-s2">2. تصميم الجرافيك والهويات البصرية</option>
-                    <option value="Service 3" id="opt-s3">3. التسويق والإعلانات الممولة</option>
-                    <option value="Service 4" id="opt-s4">4. إدارة صفحات التواصل الاجتماعي</option>
-                    <option value="Service 5" id="opt-s5">5. المونتاج وصناعة الفيديو</option>
-                    <option value="Service 6" id="opt-s6">6. الاستشارات التقنية</option>
-                    <option value="Service 7" id="opt-s7">7. كتابة المحتوى والترجمة</option>
-                    <option value="Service 8" id="opt-s8">8. تحسين محركات البحث (SEO)</option>
-                    <option value="Service 9" id="opt-s9">9. الدعم الفني والصيانة</option>
-                </select>
-            </div>
-
-            <!-- Additional Details -->
-            <div>
-                <label id="label-notes" class="block text-sm font-medium mb-1 text-slate-300">تفاصيل إضافية (اختياري)</label>
-                <textarea id="notes" name="notes" rows="3" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-slate-100 placeholder-slate-500" placeholder="اكتب أي ملاحظات أو تفاصيل إضافية..."></textarea>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" id="btn-submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center space-x-2 space-x-reverse">
-                <span id="txt-submit">إرسال الطلب</span>
-                <i class="fas fa-paper-plane text-sm"></i>
-            </button>
-        </form>
-
-        <!-- Status Messages -->
-        <div id="statusModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
-                
-                <!-- Success State -->
-                <div id="stateSuccess" class="hidden space-y-3">
-                    <div class="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-3xl border border-emerald-500/20">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <h3 id="msg-success-title" class="text-xl font-bold text-white">الطلب فات بنجاح!</h3>
-                    <p id="msg-success-desc" class="text-slate-300 text-sm">تم استلام طلبك بنجاح وستتم معالجته في أقرب وقت.</p>
-                    <button onclick="closeModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 rounded-xl transition">إغلاق</button>
-                </div>
-
-                <!-- Error State -->
-                <div id="stateError" class="hidden space-y-3">
-                    <div class="w-16 h-16 bg-rose-500/10 text-rose-400 rounded-full flex items-center justify-center mx-auto text-3xl border border-rose-500/20">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h3 id="msg-error-title" class="text-xl font-bold text-white">الطلب ما فاتش!</h3>
-                    <p id="msg-error-desc" class="text-slate-300 text-sm">حدث خطأ أثناء إرسال البيانات. يمكنك التواصل معنا مباشرة عبر واتساب.</p>
-                    <div class="flex flex-col gap-2 pt-2">
-                        <a id="btn-whatsapp" href="https://wa.me/213000000000" target="_blank" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 space-x-reverse">
-                            <i class="fab fa-whatsapp text-lg"></i>
-                            <span id="txt-whatsapp">التواصل عبر واتساب</span>
-                        </a>
-                        <button onclick="closeModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm py-2 rounded-xl transition">إغلاق</button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <!-- Full Name -->
+                <div>
+                    <label id="lbl-name" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        الاسم الكامل <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-user absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm rtl:right-4 ltr:left-4 ltr:right-auto"></i>
+                        <input type="text" id="name" name="name" required oninput="saveDraft()" 
+                               class="w-full pr-11 pl-4 ltr:pl-11 ltr:pr-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition text-sm text-slate-100 placeholder-slate-500" 
+                               placeholder="مثال: محمد بن علي">
                     </div>
                 </div>
 
+                <!-- Phone Number -->
+                <div>
+                    <label id="lbl-phone" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        رقم الهاتف <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-phone-alt absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm rtl:right-4 ltr:left-4 ltr:right-auto"></i>
+                        <input type="tel" id="phone" name="phone" required dir="ltr" oninput="saveDraft(); validatePhone(this)" 
+                               class="w-full pr-11 pl-4 ltr:pl-11 ltr:pr-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition text-sm text-slate-100 placeholder-slate-500 text-right ltr:text-left" 
+                               placeholder="06XXXXXXXX / 07XXXXXXXX">
+                    </div>
+                    <p id="phone-err" class="text-rose-400 text-xs mt-1 hidden">يرجى إدخال رقم هاتف صحيح (05/06/07)</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <!-- Email (Optional) -->
+                <div>
+                    <label id="lbl-email" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        البريد الإلكتروني <span class="text-slate-500">(اختياري)</span>
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm rtl:right-4 ltr:left-4 ltr:right-auto"></i>
+                        <input type="email" id="email" name="email" oninput="saveDraft()" 
+                               class="w-full pr-11 pl-4 ltr:pl-11 ltr:pr-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition text-sm text-slate-100 placeholder-slate-500" 
+                               placeholder="example@gmail.com">
+                    </div>
+                </div>
+
+                <!-- Company / Brand Name -->
+                <div>
+                    <label id="lbl-company" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        اسم المشروع / الشركة <span class="text-slate-500">(اختياري)</span>
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-briefcase absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm rtl:right-4 ltr:left-4 ltr:right-auto"></i>
+                        <input type="text" id="company" name="company" oninput="saveDraft()" 
+                               class="w-full pr-11 pl-4 ltr:pl-11 ltr:pr-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition text-sm text-slate-100 placeholder-slate-500" 
+                               placeholder="اسم علامتك التجارية">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Button -->
+            <div class="pt-4">
+                <button type="button" onclick="goToStep(2)" class="w-full bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-brand-500/25 transition-all duration-200 flex items-center justify-center gap-2">
+                    <span id="btn-next-txt">الانتقال لتفاصيل الخدمة</span>
+                    <i class="fas fa-arrow-left text-sm rtl:rotate-0 ltr:rotate-180"></i>
+                </button>
             </div>
         </div>
-    </main>
 
-    <!-- Footer -->
-    <footer class="text-center text-slate-500 text-xs mt-6">
-        &copy; <span id="year"></span> All Rights Reserved.
-    </footer>
-
-    <!-- Script Section -->
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby12feoPBrFpsk-LqLoT_lozc8gM_TehtVLgfFsW8QudBb5flfnIZ69KNiTryM-VJhrLg/exec";
-        const WHATSAPP_NUMBER = "213000000000"; // يمكنك تغيير الرقم هنا
-
-        document.getElementById('year').innerText = new Date().getFullYear();
-
-        const translations = {
-            ar: {
-                dir: 'rtl',
-                title: 'طلب خدمة جديدة',
-                subtitle: 'يرجى ملء الاستمارة لتقديم طلبك',
-                nameLabel: 'الاسم الكامل *',
-                namePlaceholder: 'أدخل اسمك الكامل',
-                phoneLabel: 'رقم الهاتف *',
-                phonePlaceholder: '06XXXXXXXX',
-                serviceLabel: 'اختر الخدمة المطلوبة *',
-                serviceDefault: '-- اختر خدمة --',
-                notesLabel: 'تفاصيل إضافية (اختياري)',
-                notesPlaceholder: 'اكتب أي ملاحظات أو تفاصيل إضافية...',
-                submitBtn: 'إرسال الطلب',
-                successTitle: 'الطلب فات بنجاح! (Message Fat)',
-                successDesc: 'شكراً لك! تم تسليم طلبك بنجاح وستصلك استجابتنا قريباً.',
-                errorTitle: 'الطلب ما فاتش! (Message Mafatch)',
-                errorDesc: 'تعذر إرسال الطلب حالياً. يمكنكم تحويل الطلب أو التواصل معنا مباشرة عبر واتساب.',
-                whatsappBtn: 'التواصل عبر واتساب',
-                services: [
-                    '1. تطوير المواقع الإلكترونية',
-                    '2. تصميم الجرافيك والهويات البصرية',
-                    '3. التسويق والإعلانات الممولة',
-                    '4. إدارة صفحات التواصل الاجتماعي',
-                    '5. المونتاج وصناعة الفيديو',
-                    '6. الاستشارات التقنية',
-                    '7. كتابة المحتوى والترجمة',
-                    '8. تحسين محركات البحث (SEO)',
-                    '9. الدعم الفني والصيانة'
-                ]
-            },
-            fr: {
-                dir: 'ltr',
-                title: 'Demander un Service',
-                subtitle: 'Veuillez remplir le formulaire ci-dessous',
-                nameLabel: 'Nom Complet *',
-                namePlaceholder: 'Votre nom complet',
-                phoneLabel: 'Numéro de Téléphone *',
-                phonePlaceholder: '06XXXXXXXX',
-                serviceLabel: 'Sélectionner le Service *',
-                serviceDefault: '-- Choisir un service --',
-                notesLabel: 'Détails Supplémentaires (Optionnel)',
-                notesPlaceholder: 'Écrivez vos remarques ici...',
-                submitBtn: 'Envoyer la Demande',
-                successTitle: 'Demande envoyée avec succès !',
-                successDesc: 'Merci ! Votre demande a été reçue et sera traitée rapidement.',
-                errorTitle: 'Échec de l\'envoi !',
-                errorDesc: 'Impossible d\'envoyer votre demande. Vous pouvez nous contacter sur WhatsApp.',
-                whatsappBtn: 'Contacter sur WhatsApp',
-                services: [
-                    '1. Développement Web',
-                    '2. Design Graphique & Identité',
-                    '3. Marketing & Publicité',
-                    '4. Gestion des Réseaux Sociaux',
-                    '5. Montage Vidéo',
-                    '6. Conseil Technique',
-                    '7. Rédaction & Traduction',
-                    '8. Référencement (SEO)',
-                    '9. Support Technique & Maintenance'
-                ]
-            },
-            en: {
-                dir: 'ltr',
-                title: 'Request a Service',
-                subtitle: 'Please fill out the form below',
-                nameLabel: 'Full Name *',
-                namePlaceholder: 'Enter your full name',
-                phoneLabel: 'Phone Number *',
-                phonePlaceholder: '06XXXXXXXX',
-                serviceLabel: 'Select Service *',
-                serviceDefault: '-- Select a service --',
-                notesLabel: 'Additional Details (Optional)',
-                notesPlaceholder: 'Write any notes or requirements...',
-                submitBtn: 'Submit Request',
-                successTitle: 'Request Sent Successfully!',
-                successDesc: 'Thank you! Your request has been received and will be processed soon.',
-                errorTitle: 'Submission Failed!',
-                errorDesc: 'Could not send request right now. Feel free to reach out via WhatsApp.',
-                whatsappBtn: 'Contact via WhatsApp',
-                services: [
-                    '1. Web Development',
-                    '2. Graphic Design & Branding',
-                    '3. Marketing & Ads',
-                    '4. Social Media Management',
-                    '5. Video Editing',
-                    '6. Technical Consulting',
-                    '7. Content Writing & Translation',
-                    '8. Search Engine Optimization (SEO)',
-                    '9. Technical Support & Maintenance'
-                ]
-            }
-        };
-
-        let currentLang = 'ar';
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            const t = translations[lang];
-
-            document.documentElement.dir = t.dir;
-            document.documentElement.lang = lang;
-
-            // Toggle active lang buttons
-            ['ar', 'fr', 'en'].forEach(l => {
-                const btn = document.getElementById(`btn-${l}`);
-                if (l === lang) {
-                    btn.className = "px-3 py-1.5 rounded-md transition-all duration-200 bg-emerald-500 text-white font-bold";
-                } else {
-                    btn.className = "px-3 py-1.5 rounded-md transition-all duration-200 text-slate-400 hover:text-white";
-                }
-            });
-
-            // Update Labels & Text
-            document.getElementById('title').innerText = t.title;
-            document.getElementById('subtitle').innerText = t.subtitle;
-            document.getElementById('label-name').innerText = t.nameLabel;
-            document.getElementById('name').placeholder = t.namePlaceholder;
-            document.getElementById('label-phone').innerText = t.phoneLabel;
-            document.getElementById('phone').placeholder = t.phonePlaceholder;
-            document.getElementById('label-service').innerText = t.serviceLabel;
-            document.getElementById('opt-default').innerText = t.serviceDefault;
-            document.getElementById('label-notes').innerText = t.notesLabel;
-            document.getElementById('notes').placeholder = t.notesPlaceholder;
-            document.getElementById('txt-submit').innerText = t.submitBtn;
-
-            // Modal texts
-            document.getElementById('msg-success-title').innerText = t.successTitle;
-            document.getElementById('msg-success-desc').innerText = t.successDesc;
-            document.getElementById('msg-error-title').innerText = t.errorTitle;
-            document.getElementById('msg-error-desc').innerText = t.errorDesc;
-            document.getElementById('txt-whatsapp').innerText = t.whatsappBtn;
-
-            // Options text
-            t.services.forEach((s, idx) => {
-                document.getElementById(`opt-s${idx+1}`).innerText = s;
-            });
-        }
-
-        async function handleSubmit(e) {
-            e.preventDefault();
-            const submitBtn = document.getElementById('btn-submit');
-            const submitTxt = document.getElementById('txt-submit');
+        <!-- STEP 2: Service Selection & Project Details -->
+        <div id="step-2" class="space-y-6 hidden transition-all duration-300">
             
-            // Disable button during submission
-            submitBtn.disabled = true;
-            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
-            submitTxt.innerText = currentLang === 'ar' ? 'جاري الإرسال...' : (currentLang === 'fr' ? 'Envoi en cours...' : 'Sending...');
+            <!-- Service Cards Selection (9 Services) -->
+            <div>
+                <label id="lbl-select-service" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">
+                    اختر الخدمة المطلوبة *
+                </label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="services-grid">
+                    <!-- Card 1 -->
+                    <label class="service-card cursor-pointer relative">
+                        <input type="radio" name="service" value="تطوير المواقع والمنصات" class="peer sr-only" required onchange="saveDraft(); handleServiceSelect()">
+                        <div class="p-3.5 rounded-2xl border border-slate-700/80 bg-slate-900/60 hover:border-slate-500 transition-all duration-200 flex items-center gap-3">
+                            <div class="icon-box w-9 h-9 rounded-xl bg-slate-800 text-brand-400 flex items-center justify-center shrink-0 transition-colors">
+                                <i class="fas fa-code text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-200 service-title">تطوير المواقع والمنصات</span>
+                        </div>
+                    </label>
 
-            const formData = new FormData(document.getElementById('requestForm'));
-            formData.append('language', currentLang);
+                    <!-- Card 2 -->
+                    <label class="service-card cursor-pointer relative">
+                        <input type="radio" name="service" value="تصميم الجرافيك والهويات" class="peer sr-only" onchange="saveDraft(); handleServiceSelect()">
+                        <div class="p-3.5 rounded-2xl border border-slate-700/80 bg-slate-900/60 hover:border-slate-500 transition-all duration-200 flex items-center gap-3">
+                            <div class="icon-box w-9 h-9 rounded-xl bg-slate-800 text-brand-400 flex items-center justify-center shrink-0 transition-colors">
+                                <i class="fas fa-palette text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-200 service-title">تصميم الجرافيك والهويات</span>
+                        </div>
+                    </label>
 
-            try {
-                // Fetch with no-cors / mode handle
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData
-                });
+                    <!-- Card 3 -->
+                    <label class="service-card cursor-pointer relative">
+                        <input type="radio" name="service" value="التسويق والإعلانات الممولة" class="peer sr-only" onchange="saveDraft(); handleServiceSelect()">
+                        <div class="p-3.5 rounded-2xl border border-slate-700/80 bg-slate-900/60 hover:border-slate-500 transition-all duration-200 flex items-center gap-3">
+                            <div class="icon-box w-9 h-9 rounded-xl bg-slate-800 text-brand-400 flex items-center justify-center shrink-0 transition-colors">
+                                <i class="fas fa-bullhorn text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-200 service-title">التسويق والإعلانات الممولة</span>
+                        </div>
+                    </label>
 
-                // Show success modal
-                showModal(true);
-                document.getElementById('requestForm').reset();
-            } catch (err) {
-                console.error("Submission Error:", err);
-                // Show error modal with WhatsApp Option
-                showModal(false);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-                submitTxt.innerText = translations[currentLang].submitBtn;
-            }
+                    <!-- Card 4 -->
+                    <label class="service-card cursor-pointer relative">
+                        <input type="radio" name="service" value="إدارة التواصل الاجتماعي" class="peer sr-only" onchange="saveDraft(); handleServiceSelect()">
+                        <div class="p-3.5 rounded-2xl border border-slate-700/80 bg-slate-900/60 hover:border-slate-500 transition-all duration-200 flex items-center gap-3">
+                            <div class="icon-box w-9 h-9 rounded-xl bg-slate-800 text-brand-400 flex items-center justify-center shrink-0 transition-colors">
+                                <i class="fas fa-hashtag text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-200 service-title">إدارة التواصل الاجتماعي</span>
+                        </div>
+                    </label>
+
+                    <!-- Card 5 -->
+                    <label class="service-card cursor-pointer relative">
+                        <input type="radio" name="service" value="المونتاج وصناعة الفيديو" class="peer sr-only" onchange="saveDraft(); handleServiceSelect()">
+                        <div class="p-3.5 rounded-2xl border border-slate-700/80 bg-slate-900/60 hover:border-slate-500 transition-all duration-200 flex items-center gap-3">
+                            <div class="icon-box w-9 h-9 rounded-xl bg-slate-800 text-brand-400 flex items-center justify-center shrink-0 transition-colors">
+                                <i class="fas fa-film text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-200 service-title">المونتاج وصناعة الفيديو</span>
+                        </div>
+                    </label>
+
+                    <!-- Card 6 -->
+                    <label class="service-card cursor-pointer relative">
+                        <input type="radio" name="service" value="الاستشارات التقنية البرمجية" class="peer sr-only" onchange="saveDraft(); handleServiceSelect()">
+                        <div class="p-3.5 rounded-2xl border border-slate-700/80 bg-slate-900/60 hover:border-slate-500 transition-all duration-200 flex items-center gap-3">
+                            <div class="icon-box w-9 h-9 rounded-xl bg-slate-800 text-brand-400 flex items-center justify-center shrink-0 transition-colors">
+                                <i class="fas fa-lightbulb text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-200 service-title">الاستشارات التقنية البرمجية</span>
+                        </div>
+                    </label>
+
+                    <!-- Card 7 -->
+                    <label class="service-card cursor-pointer relative">
+                        <input type="radio" name="service" value="كتابة المحتوى والترجمة" class="peer sr-only" onchange="saveDraft(); handleServiceSelect()">
+                        <div class="p-3.5 rounded-2xl border border-slate-700/80 bg-slate-900/60 hover:border-slate-500 transition-all duration-200 flex items-center gap-3">
+                            <div class="icon-box w-9 h-9 rounded-xl bg-slate-800 text-brand-400 flex items-center justify-center shrink-0 transition-colors">
+                                <i class="fas fa-pen-nib text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-200 service-title">كتابة المحتوى والترجمة</span>
+                        </div>
+                    </label>
+
+                    <!-- Card 8 -->
+                    <label class="service-card cursor-pointer relative">
+                        <input type="radio" name="service" value="تحسين محركات البحث SEO" class="peer sr-only" onchange="saveDraft(); handleServiceSelect()">
+                        <div class="p-3.5 rounded-2xl border border-slate-700/80 bg-slate-900/60 hover:border-slate-500 transition-all duration-200 flex items-center gap-3">
+                            <div class="icon-box w-9 h-9 rounded-xl bg-slate-800 text-brand-400 flex items-center justify-center shrink-0 transition-colors">
+                                <i class="fas fa-chart-line text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-200 service-title">تحسين محركات البحث SEO</span>
+                        </div>
+                    </label>
+
+                    <!-- Card 9 -->
+                    <label class="service-card cursor-pointer relative">
+                        <input type="radio" name="service" value="الدعم الفني وصيانة الأنظمة" class="peer sr-only" onchange="saveDraft(); handleServiceSelect()">
+                        <div class="p-3.5 rounded-2xl border border-slate-700/80 bg-slate-900/60 hover:border-slate-500 transition-all duration-200 flex items-center gap-3">
+                            <div class="icon-box w-9 h-9 rounded-xl bg-slate-800 text-brand-400 flex items-center justify-center shrink-0 transition-colors">
+                                <i class="fas fa-headset text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-200 service-title">الدعم الفني والصيانة</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Budget & Timeline Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <!-- Budget Selection -->
+                <div>
+                    <label id="lbl-budget" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        الميزانية التقديرية <span class="text-slate-500">(اختياري)</span>
+                    </label>
+                    <select id="budget" name="budget" onchange="saveDraft()" class="w-full px-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition text-sm text-slate-100">
+                        <option value="غير محددة" id="opt-b1">-- غير محددة حالياً --</option>
+                        <option value="أقل من 30,000 دج" id="opt-b2">أقل من 30,000 دج</option>
+                        <option value="30,000 - 80,000 دج" id="opt-b3">30,000 دج - 80,000 دج</option>
+                        <option value="80,000 - 200,000 دج" id="opt-b4">80,000 دج - 200,000 دج</option>
+                        <option value="أكثر من 200,000 دج" id="opt-b5">مشروع كبير (> 200,000 دج)</option>
+                    </select>
+                </div>
+
+                <!-- Urgency / Delivery time -->
+                <div>
+                    <label id="lbl-urgency" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        درجة الاستعجال <span class="text-slate-500">(الأجل)</span>
+                    </label>
+                    <select id="urgency" name="urgency" onchange="saveDraft()" class="w-full px-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition text-sm text-slate-100">
+                        <option value="عادي (خلال أسابيع)" id="opt-u1">عادي (خلال أسابيع)</option>
+                        <option value="مستعجل (خلال أيام)" id="opt-u2">مستعجل (خلال أيام)</option>
+                        <option value="عاجل جداً (فوري)" id="opt-u3">عاجل جداً (في أقرب وقت ممكن)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Project Description -->
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <label id="lbl-notes" class="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                        تفاصيل المشروع والمتطلبات <span class="text-slate-500">(اختياري)</span>
+                    </label>
+                    <span class="text-[11px] text-slate-500"><span id="char-count">0</span>/500</span>
+                </div>
+                <textarea id="notes" name="notes" rows="3" maxlength="500" oninput="updateCharCount(); saveDraft()" 
+                          class="w-full p-4 bg-slate-900/90 border border-slate-700/80 rounded-2xl focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition text-sm text-slate-100 placeholder-slate-500" 
+                          placeholder="أشرح لنا فكرة مشروعك، الميزات المطلوبة، أو أي تفاصيل مساعدة..."></textarea>
+            </div>
+
+            <!-- External Links / Drive attachment -->
+            <div>
+                <label id="lbl-link" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                    رابط المرفقات أو أمثلة (Google Drive / Figma) <span class="text-slate-500">(اختياري)</span>
+                </label>
+                <div class="relative">
+                    <i class="fas fa-link absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm rtl:right-4 ltr:left-4 ltr:right-auto"></i>
+                    <input type="url" id="attachment" name="attachment" oninput="saveDraft()" 
+                           class="w-full pr-11 pl-4 ltr:pl-11 ltr:pr-4 py-3 bg-slate-900/90 border border-slate-700/80 rounded-2xl focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition text-sm text-slate-100 placeholder-slate-500" 
+                           placeholder="https://drive.google.com/...">
+                </div>
+            </div>
+
+            <!-- Form Controls Row -->
+            <div class="flex gap-3 pt-4">
+                <button type="button" onclick="goToStep(1)" class="w-1/3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-4 px-4 rounded-2xl transition duration-200 flex items-center justify-center gap-2 text-sm">
+                    <i class="fas fa-arrow-right text-sm rtl:rotate-0 ltr:rotate-180"></i>
+                    <span id="btn-back-txt">السابق</span>
+                </button>
+
+                <button type="submit" id="btn-submit" class="w-2/3 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 active:scale-[0.99] text-white font-bold py-4 px-6 rounded-2xl shadow-xl shadow-brand-500/30 transition-all duration-200 flex items-center justify-center gap-2">
+                    <span id="txt-submit">إرسال الطلب الآن</span>
+                    <i class="fas fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+    </form>
+
+    <!-- Status Modal Container -->
+    <div id="statusModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="glass-card bg-slate-900 border border-slate-700/80 rounded-3xl p-6 sm:p-8 max-w-md w-full text-center space-y-5 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            
+            <!-- Success State -->
+            <div id="stateSuccess" class="hidden space-y-4">
+                <div class="w-20 h-20 bg-brand-500/20 text-brand-400 rounded-full flex items-center justify-center mx-auto text-4xl border border-brand-500/30 shadow-lg shadow-brand-500/20">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 id="msg-success-title" class="text-2xl font-black text-white">تم إرسال الطلب بنجاح!</h3>
+                <p id="msg-success-desc" class="text-slate-300 text-sm leading-relaxed">
+                    شكراً لك! وصلتنا بيانات طلبك وسيتم مراجعتها من طرف فريقنا والتواصل معك في أسرع وقت.
+                </p>
+                <button onclick="closeModal(true)" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-500/25 text-sm">
+                    تم / إغلاق
+                </button>
+            </div>
+
+            <!-- Error / WhatsApp Fallback State -->
+            <div id="stateError" class="hidden space-y-4">
+                <div class="w-20 h-20 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto text-4xl border border-rose-500/30">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 id="msg-error-title" class="text-xl font-bold text-white">تعذر الإرسال المباشر!</h3>
+                <p id="msg-error-desc" class="text-slate-300 text-sm leading-relaxed">
+                    لم نتمكن من الربط التلقائي بالسيرفر حالياً. يمكنك تحويل الطلب فوراً ومباشرة عبر الواتساب بنقرة واحدة.
+                </p>
+                <div class="flex flex-col gap-2.5 pt-2">
+                    <a id="btn-whatsapp" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 text-sm">
+                        <i class="fab fa-whatsapp text-lg"></i>
+                        <span id="txt-whatsapp">تحويل الطلب للواتساب</span>
+                    </a>
+                    <button onclick="closeModal(false)" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs py-2.5 rounded-xl transition">
+                        إغلاق والمحاولة مجدداً
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="text-center text-slate-500 text-xs mt-8">
+    &copy; <span id="year"></span> PRO SERVICE PORTAL. All rights reserved.
+</footer>
+
+<!-- SCRIPT LOGIC -->
+<script>
+    // Google Apps Script Deploy URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby12feoPBrFpsk-LqLoT_lozc8gM_TehtVLgfFsW8QudBb5flfnIZ69KNiTryM-VJhrLg/exec";
+    const WHATSAPP_NUMBER = "213000000000"; // قم بتغيير الرقم هنا
+
+    let currentStep = 1;
+    let currentLang = 'ar';
+
+    document.getElementById('year').innerText = new Date().getFullYear();
+
+    // Comprehensive Multilingual Translation Matrix
+    const translations = {
+        ar: {
+            dir: 'rtl',
+            title: 'تقديم طلب خدمة جديدة',
+            subtitle: 'اختر الخدمة المناسبة وعبر عن متطلباتك للبدء في تنفيذ مشروعك بأعلى جودة.',
+            step1Label: 'المعلومات الشخصية',
+            step2Label: 'تفاصيل الخدمة',
+            nameLbl: 'الاسم الكامل *',
+            nameHolder: 'مثال: محمد بن علي',
+            phoneLbl: 'رقم الهاتف *',
+            phoneHolder: '06XXXXXXXX / 07XXXXXXXX',
+            emailLbl: 'البريد الإلكتروني (اختياري)',
+            companyLbl: 'اسم المشروع / الشركة (اختياري)',
+            companyHolder: 'اسم علامتك التجارية',
+            nextBtn: 'الانتقال لتفاصيل الخدمة',
+            backBtn: 'السابق',
+            selectServiceLbl: 'اختر الخدمة المطلوبة *',
+            budgetLbl: 'الميزانية التقديرية (اختياري)',
+            urgencyLbl: 'درجة الاستعجال (الأجل)',
+            notesLbl: 'تفاصيل المشروع والمتطلبات (اختياري)',
+            notesHolder: 'أشرح لنا فكرة مشروعك، الميزات المطلوبة، أو أي تفاصيل مساعدة...',
+            linkLbl: 'رابط المرفقات أو أمثلة (Google Drive / Figma)',
+            submitBtn: 'إرسال الطلب الآن',
+            draftSaved: 'مسودة محفوظة',
+            sending: 'جاري إرسال الطلب...',
+            successTitle: 'تم إرسال الطلب بنجاح!',
+            successDesc: 'شكراً لك! وصلتنا بيانات طلبك وسيتم مراجعتها من طرف فريقنا والتواصل معك في أسرع وقت.',
+            errorTitle: 'تعذر الإرسال المباشر!',
+            errorDesc: 'لم نتمكن من الربط التلقائي بالسيرفر حالياً. يمكنك تحويل الطلب فوراً ومباشرة عبر الواتساب بنقرة واحدة.',
+            whatsappBtn: 'تحويل الطلب للواتساب',
+            services: [
+                'تطوير المواقع والمنصات',
+                'تصميم الجرافيك والهويات',
+                'التسويق والإعلانات الممولة',
+                'إدارة التواصل الاجتماعي',
+                'المونتاج وصناعة الفيديو',
+                'الاستشارات التقنية البرمجية',
+                'كتابة المحتوى والترجمة',
+                'تحسين محركات البحث SEO',
+                'الدعم الفني والصيانة'
+            ],
+            budgets: ['-- غير محددة حالياً --', 'أقل من 30,000 دج', '30,000 دج - 80,000 دج', '80,000 دج - 200,000 دج', 'مشروع كبير (> 200,000 دج)'],
+            urgencies: ['عادي (خلال أسابيع)', 'مستعجل (خلال أيام)', 'عاجل جداً (في أقرب وقت ممكن)']
+        },
+        fr: {
+            dir: 'ltr',
+            title: 'Demander un Nouveau Service',
+            subtitle: 'Sélectionnez le service et décrivez vos besoins pour démarrer votre projet.',
+            step1Label: 'Infos Personnelles',
+            step2Label: 'Détails du Service',
+            nameLbl: 'Nom Complet *',
+            nameHolder: 'Ex: Mohamed Ali',
+            phoneLbl: 'Numéro de Téléphone *',
+            phoneHolder: '06XXXXXXXX / 07XXXXXXXX',
+            emailLbl: 'Adresse E-mail (Optionnel)',
+            companyLbl: 'Nom du Projet / Entreprise (Optionnel)',
+            companyHolder: 'Nom de votre marque',
+            nextBtn: 'Suivant: Détails du Service',
+            backBtn: 'Retour',
+            selectServiceLbl: 'Sélectionner le Service *',
+            budgetLbl: 'Budget Estimé (Optionnel)',
+            urgencyLbl: 'Degré d\'Urgence',
+            notesLbl: 'Détails du Projet (Optionnel)',
+            notesHolder: 'Décrivez votre projet, vos exigences ou toute remarque utile...',
+            linkLbl: 'Lien des Fichiers / Exemples (Google Drive / Figma)',
+            submitBtn: 'Envoyer la Demande',
+            draftSaved: 'Brouillon enregistré',
+            sending: 'Envoi en cours...',
+            successTitle: 'Demande Envoyée avec Succès !',
+            successDesc: 'Merci ! Votre demande a été reçue avec succès. Notre équipe vous contactera sous peu.',
+            errorTitle: 'Échec de la Connexion Directe !',
+            errorDesc: 'Impossible de joindre le serveur pour le moment. Vous pouvez envoyer directement vos infos via WhatsApp.',
+            whatsappBtn: 'Envoyer via WhatsApp',
+            services: [
+                'Développement Web & Plateformes',
+                'Design Graphique & Branding',
+                'Marketing & Publicités',
+                'Gestion des Réseaux Sociaux',
+                'Montage & Production Vidéo',
+                'Conseil & Expertise Technique',
+                'Rédaction & Traduction',
+                'Référencement SEO',
+                'Support Technique & Maintenance'
+            ],
+            budgets: ['-- Non spécifié --', 'Moins de 30 000 DA', '30 000 DA - 80 000 DA', '80 000 DA - 200 000 DA', 'Grand Projet (> 200 000 DA)'],
+            urgencies: ['Normal (Quelques semaines)', 'Urgent (Quelques jours)', 'Très Urgent (Dès que possible)']
+        },
+        en: {
+            dir: 'ltr',
+            title: 'Request a New Service',
+            subtitle: 'Select a service and specify your requirements to get your project started.',
+            step1Label: 'Personal Info',
+            step2Label: 'Service Details',
+            nameLbl: 'Full Name *',
+            nameHolder: 'Ex: John Doe',
+            phoneLbl: 'Phone Number *',
+            phoneHolder: '06XXXXXXXX / 07XXXXXXXX',
+            emailLbl: 'Email Address (Optional)',
+            companyLbl: 'Company / Brand Name (Optional)',
+            companyHolder: 'Your brand name',
+            nextBtn: 'Next: Service Details',
+            backBtn: 'Back',
+            selectServiceLbl: 'Select Required Service *',
+            budgetLbl: 'Estimated Budget (Optional)',
+            urgencyLbl: 'Timeline / Urgency',
+            notesLbl: 'Project Details & Notes (Optional)',
+            notesHolder: 'Tell us about your project, key requirements, or links...',
+            linkLbl: 'Attachment / Reference Link (Google Drive / Figma)',
+            submitBtn: 'Submit Request Now',
+            draftSaved: 'Draft saved',
+            sending: 'Submitting request...',
+            successTitle: 'Request Sent Successfully!',
+            successDesc: 'Thank you! We have received your request and our team will get in touch with you shortly.',
+            errorTitle: 'Direct Submission Failed!',
+            errorDesc: 'Could not communicate with server right now. You can instantly send your request details via WhatsApp.',
+            whatsappBtn: 'Send via WhatsApp',
+            services: [
+                'Web Development & Platforms',
+                'Graphic Design & Branding',
+                'Digital Marketing & Ads',
+                'Social Media Management',
+                'Video Editing & Production',
+                'Tech Consulting & Software',
+                'Content Writing & Translation',
+                'Search Engine Optimization (SEO)',
+                'Technical Support & Maintenance'
+            ],
+            budgets: ['-- Unspecified --', 'Under 30,000 DZD', '30,000 DZD - 80,000 DZD', '80,000 DZD - 200,000 DZD', 'Enterprise (> 200,000 DZD)'],
+            urgencies: ['Standard (A few weeks)', 'Urgent (A few days)', 'High Priority (ASAP)']
         }
+    };
 
-        function showModal(isSuccess) {
-            const modal = document.getElementById('statusModal');
-            const successState = document.getElementById('stateSuccess');
-            const errorState = document.getElementById('stateError');
+    // Switch Languages & Update DOM Labels dynamically
+    function setLanguage(lang) {
+        currentLang = lang;
+        const t = translations[lang];
 
-            modal.classList.remove('hidden');
+        document.documentElement.dir = t.dir;
+        document.documentElement.lang = lang;
 
-            if (isSuccess) {
-                successState.classList.remove('hidden');
-                errorState.classList.add('hidden');
+        // Update Language Buttons Active State
+        ['ar', 'fr', 'en'].forEach(l => {
+            const btn = document.getElementById(`btn-${l}`);
+            if (l === lang) {
+                btn.className = "px-3 py-1.5 rounded-lg transition-all duration-200 bg-brand-500 text-white shadow-md font-bold";
             } else {
-                errorState.classList.remove('hidden');
-                successState.classList.add('hidden');
+                btn.className = "px-3 py-1.5 rounded-lg transition-all duration-200 text-slate-400 hover:text-white font-normal";
+            }
+        });
 
-                // Build custom WhatsApp message with form values
-                const nameVal = document.getElementById('name').value;
-                const phoneVal = document.getElementById('phone').value;
-                const serviceVal = document.getElementById('service').value;
-                const notesVal = document.getElementById('notes').value;
+        // Text Replacements
+        document.getElementById('main-title').innerText = t.title;
+        document.getElementById('main-subtitle').innerText = t.subtitle;
+        document.getElementById('step1-label').innerText = t.step1Label;
+        document.getElementById('step2-label').innerText = t.step2Label;
+        document.getElementById('lbl-name').innerHTML = t.nameLbl;
+        document.getElementById('name').placeholder = t.nameHolder;
+        document.getElementById('lbl-phone').innerHTML = t.phoneLbl;
+        document.getElementById('phone').placeholder = t.phoneHolder;
+        document.getElementById('lbl-email').innerHTML = t.emailLbl;
+        document.getElementById('lbl-company').innerHTML = t.companyLbl;
+        document.getElementById('company').placeholder = t.companyHolder;
+        document.getElementById('btn-next-txt').innerText = t.nextBtn;
+        document.getElementById('btn-back-txt').innerText = t.backBtn;
+        document.getElementById('lbl-select-service').innerHTML = t.selectServiceLbl;
+        document.getElementById('lbl-budget').innerHTML = t.budgetLbl;
+        document.getElementById('lbl-urgency').innerHTML = t.urgencyLbl;
+        document.getElementById('lbl-notes').innerHTML = t.notesLbl;
+        document.getElementById('notes').placeholder = t.notesHolder;
+        document.getElementById('lbl-link').innerHTML = t.linkLbl;
+        document.getElementById('txt-submit').innerText = t.submitBtn;
+        document.getElementById('txt-draft-saved').innerText = t.draftSaved;
 
-                const textMsg = encodeURIComponent(`سلام، حاولنا نبعثو طلب وما فاتش:\n- الاسم: ${nameVal}\n- الهاتف: ${phoneVal}\n- الخدمة: ${serviceVal}\n- تفاصيل: ${notesVal}`);
-                document.getElementById('btn-whatsapp').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${textMsg}`;
+        // Modals
+        document.getElementById('msg-success-title').innerText = t.successTitle;
+        document.getElementById('msg-success-desc').innerText = t.successDesc;
+        document.getElementById('msg-error-title').innerText = t.errorTitle;
+        document.getElementById('msg-error-desc').innerText = t.errorDesc;
+        document.getElementById('txt-whatsapp').innerText = t.whatsappBtn;
+
+        // Service Titles in Cards Grid
+        const serviceTitles = document.querySelectorAll('.service-title');
+        t.services.forEach((s, idx) => {
+            if (serviceTitles[idx]) serviceTitles[idx].innerText = s;
+        });
+
+        // Budget Dropdown Options
+        ['opt-b1', 'opt-b2', 'opt-b3', 'opt-b4', 'opt-b5'].forEach((id, idx) => {
+            const opt = document.getElementById(id);
+            if (opt) opt.innerText = t.budgets[idx];
+        });
+
+        // Urgency Dropdown Options
+        ['opt-u1', 'opt-u2', 'opt-u3'].forEach((id, idx) => {
+            const opt = document.getElementById(id);
+            if (opt) opt.innerText = t.urgencies[idx];
+        });
+    }
+
+    // Multi-step Navigation
+    function goToStep(step) {
+        if (step === 2) {
+            // Validate Step 1 first
+            const name = document.getElementById('name');
+            const phone = document.getElementById('phone');
+
+            if (!name.value.trim()) {
+                name.focus();
+                name.classList.add('border-rose-500');
+                return;
+            } else {
+                name.classList.remove('border-rose-500');
+            }
+
+            if (!phone.value.trim() || !validatePhone(phone)) {
+                phone.focus();
+                phone.classList.add('border-rose-500');
+                return;
+            } else {
+                phone.classList.remove('border-rose-500');
             }
         }
 
-        function closeModal() {
-            document.getElementById('statusModal').classList.add('hidden');
+        currentStep = step;
+        const step1 = document.getElementById('step-1');
+        const step2 = document.getElementById('step-2');
+        const step1Circle = document.getElementById('step1-circle');
+        const step2Circle = document.getElementById('step2-circle');
+        const step1Label = document.getElementById('step1-label');
+        const step2Label = document.getElementById('step2-label');
+        const stepLine = document.getElementById('step-line');
+
+        if (step === 1) {
+            step1.classList.remove('hidden');
+            step2.classList.add('hidden');
+
+            step1Circle.className = "w-10 h-10 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shadow-lg shadow-brand-500/30 transition-all duration-300";
+            step2Circle.className = "w-10 h-10 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-bold flex items-center justify-center transition-all duration-300";
+            
+            step1Label.className = "text-xs font-bold text-brand-400";
+            step2Label.className = "text-xs font-medium text-slate-500";
+            
+            stepLine.className = "flex-1 h-1 bg-slate-700 mx-3 rounded-full transition-all duration-500";
+        } else {
+            step1.classList.add('hidden');
+            step2.classList.remove('hidden');
+
+            step1Circle.className = "w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold flex items-center justify-center transition-all duration-300";
+            step1Circle.innerHTML = '<i class="fas fa-check text-xs"></i>';
+            
+            step2Circle.className = "w-10 h-10 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shadow-lg shadow-brand-500/30 transition-all duration-300";
+            
+            step1Label.className = "text-xs font-medium text-slate-400";
+            step2Label.className = "text-xs font-bold text-brand-400";
+
+            stepLine.className = "flex-1 h-1 bg-brand-500 mx-3 rounded-full transition-all duration-500";
         }
-    </script>
-</body>
-</html>
+    }
+
+    // Phone Validation (Algerian Format Test or Generic 8+ digits)
+    function validatePhone(input) {
+        const val = input.value.replace(/\s+/g, '');
+        const err = document.getElementById('phone-err');
+        const isAlgerian = /^(05|06|07)[0-9]{8}$/.test(val) || val.length >= 8;
+
+        if (val.length > 0 && !isAlgerian) {
+            err.classList.remove('hidden');
+            return false;
+        } else {
+            err.classList.add('hidden');
+            return true;
+        }
+    }
+
+    // Dynamic Char counter
+    function updateCharCount() {
+        const textarea = document.getElementById('notes');
+        document.getElementById('char-count').innerText = textarea.value.length;
+    }
+
+    // Auto Save Draft to LocalStorage
+    function saveDraft() {
+        const formData = {
+            name: document.getElementById('name').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value,
+            company: document.getElementById('company').value,
+            service: document.querySelector('input[name="service"]:checked')?.value || '',
+            budget: document.getElementById('budget').value,
+            urgency: document.getElementById('urgency').value,
+            notes: document.getElementById('notes').value,
+            attachment: document.getElementById('attachment').value,
+            lang: currentLang
+        };
+        localStorage.setItem('pro_request_draft', JSON.stringify(formData));
+        
+        const badge = document.getElementById('draft-status');
+        badge.classList.remove('opacity-0');
+        setTimeout(() => badge.classList.add('opacity-100'), 100);
+    }
+
+    function restoreDraft() {
+        const saved = localStorage.getItem('pro_request_draft');
+        if (!saved) return;
+
+        try {
+            const data = JSON.parse(saved);
+            if (data.name) document.getElementById('name').value = data.name;
+            if (data.phone) document.getElementById('phone').value = data.phone;
+            if (data.email) document.getElementById('email').value = data.email;
+            if (data.company) document.getElementById('company').value = data.company;
+            if (data.budget) document.getElementById('budget').value = data.budget;
+            if (data.urgency) document.getElementById('urgency').value = data.urgency;
+            if (data.notes) {
+                document.getElementById('notes').value = data.notes;
+                updateCharCount();
+            }
+            if (data.attachment) document.getElementById('attachment').value = data.attachment;
+            
+            if (data.service) {
+                const radio = document.querySelector(`input[name="service"][value="${data.service}"]`);
+                if (radio) radio.checked = true;
+            }
+        } catch(e) {
+            console.error("Draft restore error", e);
+        }
+    }
+
+    function handleServiceSelect() {
+        // Optional visual feedback on select
+    }
+
+    // Handle Form Submission
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        const selectedService = document.querySelector('input[name="service"]:checked');
+        if (!selectedService) {
+            alert(currentLang === 'ar' ? 'يرجى اختيار خدمة واحدة على الأقل' : 'Please select a service');
+            return;
+        }
+
+        const submitBtn = document.getElementById('btn-submit');
+        const submitTxt = document.getElementById('txt-submit');
+        
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+        submitTxt.innerText = translations[currentLang].sending;
+
+        // Form Data Payload
+        const formData = new FormData(document.getElementById('requestForm'));
+        formData.append('service', selectedService.value);
+        formData.append('language', currentLang);
+        formData.append('timestamp', new Date().toISOString());
+
+        try {
+            // Send to Google Apps Script
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Standard Google Apps Script cross-domain handling
+                body: formData
+            });
+
+            // Clear Draft & Show Success
+            localStorage.removeItem('pro_request_draft');
+            showModal(true);
+        } catch (err) {
+            console.error("Fetch submission error:", err);
+            // Fallback to WhatsApp modal with pre-encoded payload
+            showModal(false);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            submitTxt.innerText = translations[currentLang].submitBtn;
+        }
+    }
+
+    // Show Modal Dialog
+    function showModal(isSuccess) {
+        const modal = document.getElementById('statusModal');
+        const successState = document.getElementById('stateSuccess');
+        const errorState = document.getElementById('stateError');
+
+        modal.classList.remove('hidden');
+
+        if (isSuccess) {
+            successState.classList.remove('hidden');
+            errorState.classList.add('hidden');
+        } else {
+            errorState.classList.remove('hidden');
+            successState.classList.add('hidden');
+
+            // Build WhatsApp message content
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const company = document.getElementById('company').value;
+            const service = document.querySelector('input[name="service"]:checked')?.value || 'غير محدد';
+            const budget = document.getElementById('budget').value;
+            const urgency = document.getElementById('urgency').value;
+            const notes = document.getElementById('notes').value;
+
+            const msg = `سلام عليكم، أود تقديم طلب خدمة:\n\n👤 *الاسم:* ${name}\n📞 *الهاتف:* ${phone}\n🏢 *المشروع:* ${company || 'غير محدد'}\n🛠️ *الخدمة:* ${service}\n💰 *الميزانية:* ${budget}\n⚡ *الاستعجال:* ${urgency}\n📝 *التفاصيل:* ${notes || 'لا توجد'}`;
+            
+            document.getElementById('btn-whatsapp').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+        }
+    }
+
+    function closeModal(resetForm = false) {
+        document.getElementById('statusModal').classList.add('hidden');
+        if (resetForm) {
+            document.getElementById('requestForm').reset();
+            updateCharCount();
+            goToStep(1);
+        }
+    }
+
+    // Initializer
+    window.addEventListener('DOMContentLoaded', () => {
+        restoreDraft();
+        setLanguage('ar');
+    });
+</script>
