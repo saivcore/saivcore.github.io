@@ -1,707 +1,1254 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SaivCORE — طلب خدمة جديد</title>
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Font: Inter & Cairo -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#ffffff" />
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Cairo', 'Inter', 'sans-serif'],
-          },
-          colors: {
-            saiv: {
-              bg: '#0f172a',
-              card: '#1e293b',
-              border: '#334155',
-              accent: '#0284c7',
-              cyan: '#38bdf8',
-              glow: '#00f2fe'
-            }
-          }
-        }
-      }
-    }
-  </script>
+<title>SaivCORE — طلب خدمة</title>
+<meta name="description" content="طلب خدمة من SaivCORE — حلول برمجية وتقنية مخصصة." />
 
-  <style>
-    body {
-      background: radial-gradient(circle at top center, #1e293b 0%, #0f172a 100%);
-      min-height: 100vh;
-      color: #f8fafc;
-    }
-    .glass-card {
-      background: rgba(30, 41, 59, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-    }
-    .input-field {
-      background-color: rgba(15, 23, 42, 0.7);
-      border: 1px solid #334155;
-      color: #f8fafc;
-      transition: all 0.25s ease;
-    }
-    .input-field:focus {
-      border-color: #38bdf8;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
-      outline: none;
-    }
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #38bdf8;
-    }
-  </style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23111'/%3E%3Ctext x='50' y='68' font-size='48' text-anchor='middle' fill='white' font-family='Arial' font-weight='600'%3ESC%3C/text%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<style>
+  /* =========================================================
+     DESIGN SYSTEM — Minimalist · Modern · Light/Dark · RTL/LTR
+     ========================================================= */
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #fafafa;
+    --surface: #ffffff;
+    --border: #e5e5e5;
+    --border-strong: #d4d4d4;
+    --text: #111111;
+    --text-2: #404040;
+    --muted: #737373;
+    --green: #16a34a;
+    --rose: #e11d48;
+  }
+
+  html.dark {
+    --bg: #0a0a0a;
+    --bg-soft: #0f0f0f;
+    --surface: #141414;
+    --border: #262626;
+    --border-strong: #333333;
+    --text: #fafafa;
+    --text-2: #d4d4d4;
+    --muted: #a3a3a3;
+    --green: #22c55e;
+    --rose: #fb7185;
+  }
+
+  * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'Cairo', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    font-size: 15px;
+    transition: background-color .25s ease, color .25s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  html[dir="rtl"] body { font-family: 'Cairo', 'Inter', sans-serif; }
+
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  button, input, select, textarea { font-family: inherit; }
+  ::selection { background: var(--text); color: var(--bg); }
+
+  /* ---------- NAVBAR ---------- */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s ease;
+  }
+  .navbar.scrolled { border-bottom-color: var(--border); }
+
+  .nav-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    background: var(--text);
+    color: var(--bg);
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+
+  .nav-actions { display: flex; align-items: center; gap: 6px; }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    transition: all .15s ease;
+  }
+  .icon-btn:hover { border-color: var(--border-strong); color: var(--text); }
+
+  /* Lang tabs */
+  .lang-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-soft);
+  }
+  .lang-tab {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 600;
+    transition: all .15s ease;
+    font-family: inherit;
+  }
+  .lang-tab:hover { color: var(--text); }
+  .lang-tab.active {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  /* ---------- LAYOUT ---------- */
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+    width: 100%;
+    flex: 1;
+  }
+
+  /* ---------- HEADER ---------- */
+  .page-head {
+    text-align: center;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .page-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6px;
+  }
+  .page-logo i {
+    font-size: 22px;
+    color: var(--text);
+  }
+
+  .page-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    margin: 0 0 6px;
+    color: var(--text);
+  }
+
+  .page-tagline {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* ---------- FORM ---------- */
+  .form-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .form-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+  }
+  .form-title i { color: var(--muted); font-size: 13px; }
+
+  .ref-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-soft);
+    font-family: 'Inter', ui-monospace, monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-2);
+    letter-spacing: .02em;
+  }
+
+  form { display: block; }
+
+  .field {
+    margin-bottom: 20px;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-2);
+    margin-bottom: 7px;
+    letter-spacing: -.005em;
+  }
+  .field-label .required { color: var(--rose); margin-inline-start: 2px; }
+  .field-label .optional { color: var(--muted); font-weight: 500; font-size: 11.5px; }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-icon {
+    position: absolute;
+    inset-inline-start: 14px;
+    color: var(--muted);
+    font-size: 13px;
+    pointer-events: none;
+    transition: color .15s ease;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 12px 14px 12px 40px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  html[dir="rtl"] .field input,
+  html[dir="rtl"] .field select,
+  html[dir="rtl"] .field textarea {
+    padding: 12px 40px 12px 14px;
+  }
+
+  .field textarea {
+    padding: 14px;
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.7;
+  }
+  html[dir="rtl"] .field textarea {
+    padding: 14px;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder { color: var(--muted); opacity: .8; }
+
+  .field input:hover,
+  .field select:hover,
+  .field textarea:hover { border-color: var(--border-strong); }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--text);
+    box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+  }
+  html.dark .field input:focus,
+  html.dark .field select:focus,
+  html.dark .field textarea:focus {
+    border-color: var(--text);
+    box-shadow: 0 0 0 3px rgba(255,255,255,.08);
+  }
+
+  .field input:focus ~ .input-icon,
+  .field select:focus ~ .input-icon,
+  .field textarea:focus ~ .input-icon { color: var(--text); }
+
+  .field select {
+    cursor: pointer;
+    padding-inline-end: 38px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23737373'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+  }
+  html[dir="rtl"] .field select {
+    background-position: left 12px center;
+  }
+
+  /* Grid */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  @media (min-width: 640px) {
+    .grid-2 { grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    .grid-2 > .field { margin-bottom: 20px; }
+  }
+
+  /* Submit button */
+  .btn-submit {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 10px;
+    border: none;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .18s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: inherit;
+    letter-spacing: -.005em;
+  }
+  .btn-submit:hover:not(:disabled) { opacity: .88; }
+  .btn-submit:active:not(:disabled) { transform: translateY(1px); }
+  .btn-submit:disabled { opacity: .7; cursor: not-allowed; }
+  .btn-submit i { font-size: 13px; }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 20px;
+    margin-top: auto;
+    text-align: center;
+  }
+  .footer-copy {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* ---------- MODAL ---------- */
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility 0s .25s;
+  }
+  .modal.open { opacity: 1; visibility: visible; transition: opacity .25s ease, visibility 0s; }
+
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 24px 24px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    transform: translateY(8px) scale(.97);
+    transition: transform .3s cubic-bezier(.22, 1, .36, 1);
+  }
+  .modal.open .modal-box { transform: translateY(0) scale(1); }
+
+  .modal-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 18px;
+    font-size: 22px;
+  }
+  .modal-icon.success {
+    background: rgba(22, 163, 74, .1);
+    border: 1px solid rgba(22, 163, 74, .3);
+    color: var(--green);
+  }
+  html.dark .modal-icon.success {
+    background: rgba(34, 197, 94, .12);
+    border-color: rgba(34, 197, 94, .3);
+  }
+  .modal-icon.error {
+    background: rgba(225, 29, 72, .08);
+    border: 1px solid rgba(225, 29, 72, .3);
+    color: var(--rose);
+  }
+  html.dark .modal-icon.error {
+    background: rgba(251, 113, 133, .12);
+    border-color: rgba(251, 113, 133, .3);
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 8px;
+    letter-spacing: -.01em;
+  }
+
+  .modal-desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin: 0 0 20px;
+    line-height: 1.65;
+  }
+
+  .ref-box {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-soft);
+    font-size: 12.5px;
+    font-family: 'Inter', ui-monospace, monospace;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .ref-box strong {
+    color: var(--text);
+    font-weight: 700;
+    letter-spacing: .03em;
+  }
+
+  .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-modal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s ease;
+    font-family: inherit;
+    text-decoration: none;
+  }
+
+  .btn-modal.primary {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .btn-modal.primary:hover { opacity: .88; }
+
+  .btn-modal.ghost {
+    background: transparent;
+    color: var(--text-2);
+    border-color: var(--border);
+  }
+  .btn-modal.ghost:hover { border-color: var(--border-strong); color: var(--text); }
+
+  .btn-modal.whatsapp {
+    background: var(--green);
+    color: #ffffff;
+  }
+  .btn-modal.whatsapp:hover { opacity: .9; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 480px) {
+    .wrap { padding: 20px 16px 40px; }
+    .page-title { font-size: 20px; }
+    .form-head { flex-direction: column; align-items: flex-start; }
+    .ref-badge { font-size: 11px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  }
+</style>
 </head>
-<body class="p-4 sm:p-6 md:p-10 flex items-center justify-center font-sans antialiased">
 
-  <div class="w-full max-w-3xl glass-card rounded-3xl p-6 sm:p-10 relative overflow-hidden my-auto">
-    
-    <!-- Top Ambient Glow -->
-    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+<body>
 
-    <!-- Header & Language Switcher -->
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-slate-700/60 mb-8 relative z-10">
-      
-      <!-- Logo & Title -->
-      <div class="flex items-center gap-4 text-center sm:text-right rtl:sm:text-right ltr:sm:text-left">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-600 to-cyan-400 p-0.5 shadow-lg shadow-sky-500/20 flex items-center justify-center shrink-0">
-          <img src="main/images/P logo.png" alt="SaivCORE Logo" class="w-full h-full object-contain rounded-2xl" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fa-solid fa-microchip text-2xl text-white\'></i>';">
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-sky-300">
-            SaivCORE Tech Solutions
-          </h1>
-          <p id="slogan-text" class="text-xs sm:text-sm text-sky-400/90 font-medium mt-0.5">
-            بناء السيادة الرقمية برمز جزائري 🇩🇿
-          </p>
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+<header class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">SC</span>
+      <span>SaivCORE</span>
+    </a>
+
+    <div class="nav-actions">
+      <div class="lang-tabs">
+        <button type="button" class="lang-tab active" data-lang="ar">AR</button>
+        <button type="button" class="lang-tab" data-lang="fr">FR</button>
+        <button type="button" class="lang-tab" data-lang="en">EN</button>
+      </div>
+
+      <button class="icon-btn" id="themeBtn" aria-label="Theme">
+        <i class="fa-solid fa-moon" id="themeIcon"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+<main class="wrap">
+
+  <!-- ---------- HEADER ---------- -->
+  <div class="page-head">
+    <div class="page-logo">
+      <img src="main/images/P logo.png" alt="SaivCORE" onerror="this.remove(); this.parentElement.innerHTML = '<i class=\'fa-solid fa-microchip\'></i>';" />
+    </div>
+    <h1 class="page-title">SaivCORE</h1>
+    <p class="page-tagline" id="slogan-text">بناء السيادة الرقمية برمز جزائري 🇩🇿</p>
+  </div>
+
+  <!-- ---------- FORM HEAD ---------- -->
+  <div class="form-head">
+    <h2 class="form-title" id="form-heading">
+      <i class="fa-solid fa-paper-plane"></i>
+      <span>نموذج تقديم الطلب المباشر</span>
+    </h2>
+    <span class="ref-badge" id="ref-badge">
+      <i class="fa-solid fa-hashtag" style="font-size:10px"></i>
+      <span id="ref-value">SC-000000</span>
+    </span>
+  </div>
+
+  <!-- ---------- FORM ---------- -->
+  <form id="serviceForm" onsubmit="handleFormSubmit(event)" novalidate>
+
+    <input type="hidden" name="ref" id="ref" value="" />
+    <input type="hidden" name="lang" id="lang" value="ar" />
+
+    <!-- Row 1: Name + Phone -->
+    <div class="grid-2">
+
+      <div class="field">
+        <label class="field-label" for="fullname" id="label-fullname">
+          الاسم واللقب <span class="required">*</span>
+        </label>
+        <div class="input-wrap">
+          <i class="fa-regular fa-user input-icon"></i>
+          <input type="text" name="fullname" id="fullname" required placeholder="مثال: سيف الدين زحاف" autocomplete="name" />
         </div>
       </div>
 
-      <!-- Language Buttons -->
-      <div class="flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-700/80 text-xs font-semibold">
-        <button type="button" onclick="setLanguage('ar')" id="btn-lang-ar" class="px-3 py-1.5 rounded-xl transition-all duration-200 bg-sky-600 text-white shadow-md">
-          العربية
-        </button>
-        <button type="button" onclick="setLanguage('fr')" id="btn-lang-fr" class="px-3 py-1.5 rounded-xl transition-all duration-200 text-slate-400 hover:text-white">
-          Français
-        </button>
-        <button type="button" onclick="setLanguage('en')" id="btn-lang-en" class="px-3 py-1.5 rounded-xl transition-all duration-200 text-slate-400 hover:text-white">
-          English
-        </button>
+      <div class="field">
+        <label class="field-label" for="phone" id="label-phone">
+          رقم الهاتف <span class="required">*</span>
+        </label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-phone input-icon"></i>
+          <input type="tel" name="phone" id="phone" required placeholder="07XX XX XX XX" dir="ltr" autocomplete="tel" />
+        </div>
       </div>
+
     </div>
 
-    <form id="serviceForm" onsubmit="handleFormSubmit(event)" class="space-y-6 relative z-10">
-      
-      <!-- Hidden Input Fields for Backend -->
-      <input type="hidden" name="ref" id="ref" value="">
-      <input type="hidden" name="lang" id="lang" value="ar">
+    <!-- Row 2: Email + Wilaya -->
+    <div class="grid-2">
 
-      <!-- Section Title -->
-      <div class="flex items-center justify-between">
-        <h2 id="form-heading" class="text-lg font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-paper-plane text-sky-400">title</i> نموذج تقديم الطلب المباشر
-        </h2>
-        <span class="text-xs font-mono bg-sky-950 text-sky-300 px-3 py-1 rounded-full border border-sky-800/50" id="ref-badge">
-          REF: ...
-        </span>
-      </div>
-
-      <!-- Grid 2 Columns for Inputs -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        
-        <!-- Full Name -->
-        <div class="space-y-1.5">
-          <label id="label-fullname" for="fullname" class="block text-sm font-medium text-slate-300">
-            الاسم واللقب <span class="text-rose-400">*</span>
-          </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:right-0 ltr:left-0">
-              <i class="fa-regular fa-user"></i>
-            </div>
-            <input type="text" name="fullname" id="fullname" required placeholder="مثال: سيف الدين زحاف" class="input-field w-full rounded-xl py-3 px-10 text-sm">
-          </div>
-        </div>
-
-        <!-- Phone Number -->
-        <div class="space-y-1.5">
-          <label id="label-phone" for="phone" class="block text-sm font-medium text-slate-300">
-            رقم الهاتف <span class="text-rose-400">*</span>
-          </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:right-0 ltr:left-0">
-              <i class="fa-solid fa-phone"></i>
-            </div>
-            <input type="tel" name="phone" id="phone" required placeholder="07XX XX XX XX" dir="ltr" class="input-field w-full rounded-xl py-3 px-10 text-sm text-left rtl:text-right">
-          </div>
-        </div>
-
-        <!-- Email Address -->
-        <div class="space-y-1.5">
-          <label id="label-email" for="email" class="block text-sm font-medium text-slate-300">
-            البريد الإلكتروني <span class="text-slate-500 text-xs">(اختياري)</span>
-          </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:right-0 ltr:left-0">
-              <i class="fa-regular fa-envelope"></i>
-            </div>
-            <input type="email" name="email" id="email" placeholder="example@domain.com" dir="ltr" class="input-field w-full rounded-xl py-3 px-10 text-sm text-left rtl:text-right">
-          </div>
-        </div>
-
-        <!-- Wilaya Selection -->
-        <div class="space-y-1.5">
-          <label id="label-wilaya" for="wilaya" class="block text-sm font-medium text-slate-300">
-            الولاية <span class="text-rose-400">*</span>
-          </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:right-0 ltr:left-0">
-              <i class="fa-solid fa-location-dot"></i>
-            </div>
-            <select name="wilaya" id="wilaya" required class="input-field w-full rounded-xl py-3 px-10 text-sm appearance-none cursor-pointer">
-              <!-- Wilayas dynamically loaded via JS -->
-            </select>
-            <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:left-0 ltr:right-0">
-              <i class="fa-solid fa-chevron-down text-xs"></i>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Service Required (Dropdown with 9 Options) -->
-      <div class="space-y-1.5">
-        <label id="label-service" for="service" class="block text-sm font-medium text-slate-300">
-          الخدمة المطلوبة <span class="text-rose-400">*</span>
+      <div class="field">
+        <label class="field-label" for="email" id="label-email">
+          البريد الإلكتروني <span class="optional">(اختياري)</span>
         </label>
-        <div class="relative">
-          <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:right-0 ltr:left-0">
-            <i class="fa-solid fa-gears text-sky-400"></i>
-          </div>
-          <select name="service" id="service" required class="input-field w-full rounded-xl py-3 px-10 text-sm appearance-none cursor-pointer font-medium text-sky-300">
-            <!-- Services dynamically populated -->
+        <div class="input-wrap">
+          <i class="fa-regular fa-envelope input-icon"></i>
+          <input type="email" name="email" id="email" placeholder="example@domain.com" dir="ltr" autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="wilaya" id="label-wilaya">
+          الولاية <span class="required">*</span>
+        </label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-location-dot input-icon"></i>
+          <select name="wilaya" id="wilaya" required>
+            <!-- Populated by JS -->
           </select>
-          <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:left-0 ltr:right-0">
-            <i class="fa-solid fa-chevron-down text-xs"></i>
-          </div>
         </div>
       </div>
 
-      <!-- Urgency & Budget Row -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        
-        <!-- Urgency Level -->
-        <div class="space-y-1.5">
-          <label id="label-urgency" for="urgency" class="block text-sm font-medium text-slate-300">
-            درجة الاستعجال <span class="text-rose-400">*</span>
-          </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:right-0 ltr:left-0">
-              <i class="fa-solid fa-clock-rotate-left"></i>
-            </div>
-            <select name="urgency" id="urgency" required class="input-field w-full rounded-xl py-3 px-10 text-sm appearance-none cursor-pointer">
-              <!-- Urgency options populated via JS -->
-            </select>
-            <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:left-0 ltr:right-0">
-              <i class="fa-solid fa-chevron-down text-xs"></i>
-            </div>
-          </div>
-        </div>
+    </div>
 
-        <!-- Budget Range -->
-        <div class="space-y-1.5">
-          <label id="label-budget" for="budget" class="block text-sm font-medium text-slate-300">
-            الميزانية التقديرية <span class="text-slate-500 text-xs">(اختياري)</span>
-          </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:right-0 ltr:left-0">
-              <i class="fa-solid fa-wallet"></i>
-            </div>
-            <select name="budget" id="budget" class="input-field w-full rounded-xl py-3 px-10 text-sm appearance-none cursor-pointer">
-              <!-- Budget options populated via JS -->
-            </select>
-            <div class="absolute inset-y-0 flex items-center pointer-events-none px-3 text-slate-400 rtl:left-0 ltr:right-0">
-              <i class="fa-solid fa-chevron-down text-xs"></i>
-            </div>
-          </div>
-        </div>
-
+    <!-- Service -->
+    <div class="field">
+      <label class="field-label" for="service" id="label-service">
+        الخدمة المطلوبة <span class="required">*</span>
+      </label>
+      <div class="input-wrap">
+        <i class="fa-solid fa-gear input-icon"></i>
+        <select name="service" id="service" required>
+          <!-- Populated by JS -->
+        </select>
       </div>
+    </div>
 
-      <!-- Request Details / Message -->
-      <div class="space-y-1.5">
-        <label id="label-details" for="details" class="block text-sm font-medium text-slate-300">
-          تفاصيل ومشروع الطلب <span class="text-rose-400">*</span>
+    <!-- Row 3: Urgency + Budget -->
+    <div class="grid-2">
+
+      <div class="field">
+        <label class="field-label" for="urgency" id="label-urgency">
+          درجة الاستعجال <span class="required">*</span>
         </label>
-        <textarea name="details" id="details" rows="4" required placeholder="اشرح لنا تفاصيل الخدمة والمواصفات المطلوبة بكل وضوح..." class="input-field w-full rounded-xl p-3.5 text-sm leading-relaxed resize-none"></textarea>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="pt-2">
-        <button type="submit" id="btn-submit" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-sky-500 via-sky-600 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold text-base shadow-lg shadow-sky-500/25 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3 cursor-pointer">
-          <i class="fa-solid fa-paper-plane"></i>
-          <span id="btn-submit-text">إرسال الطلب الآن</span>
-        </button>
-      </div>
-
-    </form>
-
-    <!-- Footer Credit -->
-    <div class="mt-8 pt-4 border-t border-slate-800 text-center text-xs text-slate-500">
-      SaivCORE Enterprise Engine &copy; 2026 — All Rights Reserved.
-    </div>
-
-  </div>
-
-  <!-- Success Modal -->
-  <div id="successModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="glass-card max-w-md w-full rounded-3xl p-6 text-center space-y-5 border border-emerald-500/30 animate-bounce-in">
-      <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto text-3xl">
-        <i class="fa-solid fa-circle-check"></i>
-      </div>
-      <div>
-        <h3 id="modal-success-title" class="text-xl font-bold text-white">الطلب فات بنجاح!</h3>
-        <p id="modal-success-desc" class="text-sm text-slate-300 mt-2">تم تسجيل طلبك في نظام SaivCORE وسنتواصل معك في أقرب وقت.</p>
-        <div class="mt-4 p-3 bg-slate-900/90 rounded-xl border border-slate-700/80 text-xs font-mono text-sky-300">
-          رقم الطلب المرجعي: <span id="modal-ref-code" class="font-bold text-white">SC-XXXXXX</span>
+        <div class="input-wrap">
+          <i class="fa-solid fa-clock input-icon"></i>
+          <select name="urgency" id="urgency" required>
+            <!-- Populated by JS -->
+          </select>
         </div>
       </div>
-      <div class="flex flex-col gap-2">
-        <button onclick="closeModal('successModal'); resetForm();" id="modal-success-close" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm transition-colors">
-          حسناً، تقديم طلب آخر
-        </button>
+
+      <div class="field">
+        <label class="field-label" for="budget" id="label-budget">
+          الميزانية التقديرية <span class="optional">(اختياري)</span>
+        </label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-wallet input-icon"></i>
+          <select name="budget" id="budget">
+            <!-- Populated by JS -->
+          </select>
+        </div>
       </div>
+
+    </div>
+
+    <!-- Details -->
+    <div class="field">
+      <label class="field-label" for="details" id="label-details">
+        تفاصيل الطلب <span class="required">*</span>
+      </label>
+      <textarea name="details" id="details" required placeholder="اشرح لنا تفاصيل الخدمة والمواصفات المطلوبة بكل وضوح..."></textarea>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" id="btn-submit" class="btn-submit">
+      <i class="fa-solid fa-paper-plane"></i>
+      <span id="btn-submit-text">إرسال الطلب الآن</span>
+    </button>
+
+  </form>
+
+</main>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer>
+  <p class="footer-copy">
+    © <span id="year"></span> SaivCORE — All rights reserved.
+  </p>
+</footer>
+
+<!-- =========================================================
+     SUCCESS MODAL
+     ========================================================= -->
+<div id="successModal" class="modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-icon success">
+      <i class="fa-solid fa-check"></i>
+    </div>
+    <h3 class="modal-title" id="modal-success-title">تم إرسال الطلب بنجاح</h3>
+    <p class="modal-desc" id="modal-success-desc">تم تسجيل طلبك في نظام SaivCORE وسنتواصل معك في أقرب وقت.</p>
+    <div class="ref-box">
+      REF: <strong id="modal-ref-code">SC-XXXXXX</strong>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-modal primary" id="modal-success-close" onclick="closeModal('successModal'); resetForm();">
+        <i class="fa-solid fa-rotate-right"></i>
+        <span id="modal-success-close-text">تقديم طلب آخر</span>
+      </button>
     </div>
   </div>
+</div>
 
-  <!-- Error Modal (Message Mafatch) with Direct WhatsApp Fallback -->
-  <div id="errorModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="glass-card max-w-md w-full rounded-3xl p-6 text-center space-y-5 border border-rose-500/30">
-      <div class="w-16 h-16 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/40 flex items-center justify-center mx-auto text-3xl">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-      </div>
-      <div>
-        <h3 id="modal-error-title" class="text-xl font-bold text-white">الطلب ما فاتش مباشر!</h3>
-        <p id="modal-error-desc" class="text-sm text-slate-300 mt-2">تعذر الإرسال التلقائي للشبكة، ولكن يمكنك إرسال معطيات طلبك فوراً بضغطة زر عبر WhatsApp.</p>
-      </div>
-      <div class="space-y-3">
-        <a id="btn-whatsapp-fallback" href="#" target="_blank" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all">
-          <i class="fa-brands fa-whatsapp text-lg"></i>
-          <span id="btn-whatsapp-text">إرسال عبر WhatsApp مباشر</span>
-        </a>
-        <button onclick="closeModal('errorModal')" id="modal-error-close" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors">
-          إلغاء والمحاولة لاحقاً
-        </button>
-      </div>
+<!-- =========================================================
+     ERROR MODAL
+     ========================================================= -->
+<div id="errorModal" class="modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-icon error">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <h3 class="modal-title" id="modal-error-title">تعذر الإرسال المباشر</h3>
+    <p class="modal-desc" id="modal-error-desc">يمكنك إرسال معطيات طلبك فوراً بضغطة واحدة عبر WhatsApp.</p>
+    <div class="modal-actions">
+      <a id="btn-whatsapp-fallback" href="#" target="_blank" rel="noopener noreferrer" class="btn-modal whatsapp">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span id="btn-whatsapp-text">إرسال عبر WhatsApp</span>
+      </a>
+      <button type="button" class="btn-modal ghost" id="modal-error-close" onclick="closeModal('errorModal')">
+        <span id="modal-error-close-text">إلغاء</span>
+      </button>
     </div>
   </div>
+</div>
 
-  <script>
-    // Google Apps Script Endpoint URL
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby12feoPBrFpsk-LqLoT_lozc8gM_TehtVLgfFsW8QudBb5flfnIZ69KNiTryM-VJhrLg/exec";
+<script>
+(function () {
+  'use strict';
 
-    // 58 Algerian Wilayas List
-    const wilayas = [
-      "01 - Adrar (أدرار)", "02 - Chlef (الشلف)", "03 - Laghouat (الأغواط)", "04 - Oum El Bouaghi (أم البواقي)",
-      "05 - Batna (باتنة)", "06 - Béjaïa (بجاية)", "07 - Biskra (بسكرة)", "08 - Béchar (بشار)",
-      "09 - Blida (البليدة)", "10 - Bouira (البويرة)", "11 - Tamanrasset (تمنراست)", "12 - Tébessa (تبسة)",
-      "13 - Tlemcen (تلمسان)", "14 - Tiaret (تيارت)", "15 - Tizi Ouzou (تيزي وزو)", "16 - Algiers (الجزائر)",
-      "17 - Djelfa (الجلفة)", "18 - Jijel (جيجل)", "19 - Sétif (سطيف)", "20 - Saïda (سعيدة)",
-      "21 - Skikda (سكيكدة)", "22 - Sidi Bel Abbès (سيدي بلعباس)", "23 - Annaba (عنابة)", "24 - Guelma (قالمة)",
-      "25 - Constantine (قسنطينة)", "26 - Médéa (المدية)", "27 - Mostaganem (مستغانم)", "28 - M'Sila (المسيلة)",
-      "29 - Mascara (معسكر)", "30 - Ouargla (ورقلة)", "31 - Oran (وهران)", "32 - El Bayadh (البيض)",
-      "33 - Illizi (إليزي)", "34 - Bordj Bou Arréridj (برج بوعريريج)", "35 - Boumerdès (بومرداس)", "36 - El Tarf (الطارف)",
-      "37 - Tindouf (تندوف)", "38 - Tissemsilt (تيسمسيلت)", "39 - El Oued (الوادي)", "40 - Khenchela (خنشلة)",
-      "41 - Souk Ahras (سوق أهراس)", "42 - Tipaza (تيبازة)", "43 - Mila (ميلة)", "44 - Aïn Defla (عين الدفلى)",
-      "45 - Naâma (النعامة)", "46 - Aïn Témouchent (عين تموشنت)", "47 - Ghardaïa (غرداية)", "48 - Relizane (غليزان)",
-      "49 - Timimoun (تيميمون)", "50 - Bordj Badji Mokhtar (برج باجي مختار)", "51 - Ouled Djellal (أولاد جلال)",
-      "52 - Béni Abbès (بني عباس)", "53 - In Salah (عين صالح)", "54 - In Guezzam (عين قزام)",
-      "55 - Touggourt (تقرت)", "56 - Djanet (جانت)", "57 - El M'Ghair (المغير)", "58 - El Meniaa (المنيعة)"
-    ];
+  /* =========================================================
+     CONFIG
+     ========================================================= */
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby12feoPBrFpsk-LqLoT_lozc8gM_TehtVLgfFsW8QudBb5flfnIZ69KNiTryM-VJhrLg/exec';
 
-    // Language Translations
-    const i18n = {
-      ar: {
-        slogan: "بناء السيادة الرقمية برمز جزائري 🇩🇿",
-        heading: "نموذج تقديم الطلب المباشر",
-        fullname: "الاسم واللقب",
-        fullname_ph: "مثال: سيف الدين زحاف",
-        phone: "رقم الهاتف",
-        phone_ph: "07XX XX XX XX",
-        email: "البريد الإلكتروني",
-        email_opt: "(اختياري)",
-        wilaya: "الولاية",
-        service: "الخدمة المطلوبة",
-        urgency: "درجة الاستعجال",
-        budget: "الميزانية التقديرية",
-        details: "تفاصيل ومشروع الطلب",
-        details_ph: "اشرح لنا تفاصيل الخدمة والمواصفات المطلوبة بكل وضوح...",
-        submit: "إرسال الطلب الآن 🚀",
-        submitting: "جاري الإرسال والمعالجة...",
-        services: [
-          "1. صيانة العتاد والتنظيف (Hardware & Dust Cleaning)",
-          "2. صيانة الأنظمة والفرمتة (Formatage, Windows / Linux OS)",
-          "3. تثبيت وتفعيل البرامج والأنظمة (Software Installation & License)",
-          "4. إعداد المذكرات والبحوث (تنسيق وطباعة - Preparation memoirs)",
-          "5. التصميم الجرافيكي (Logo, Flyer, Business Card, Social Media)",
-          "6. إنتاج فيديو إشهاري احترافي (Video publicitaire sur commande)",
-          "7. تطوير المواقع والحلول السحابية (Web Development & Solutions)",
-          "8. تطوير تطبيقات الكمبيوتر (PC Applications Development)",
-          "9. خدمات وحلول أخرى (Autres services...)"
-        ],
-        urgencies: [
-          "🟢 عادي (خلال أسبوع)",
-          "🟡 متوسط (خلال 2 - 3 أيام)",
-          "🔴 عاجل جداً (في أسرع وقت ممكن)"
-        ],
-        budgets: [
-          "غير محدد بعد",
-          "أقل من 10,000 دج",
-          "10,000 دج - 50,000 دج",
-          "50,000 دج - 150,000 دج",
-          "أكثر من 150,000 دج"
-        ],
-        succ_title: "الطلب فات بنجاح! ⚡",
-        succ_desc: "تم تسجيل طلبك في نظام SaivCORE وتلقي الإشعار فوراً. سنتواصل معك في أسرع وقت.",
-        succ_close: "حسناً، تقديم طلب آخر",
-        err_title: "الطلب ما فاتش مباشر!",
-        err_desc: "تعذر الإرسال للشبكة تلقائياً، يمكنك إرسال الطلب بضغطة زر واحدة عبر الواتساب فوراً.",
-        wa_btn: "إرسال المعطيات عبر WhatsApp",
-        err_close: "إلغاء"
-      },
-      fr: {
-        slogan: "Bâtir la souveraineté numérique avec du code algérien 🇩🇿",
-        heading: "Formulaire de Demande de Service",
-        fullname: "Nom & Prénom",
-        fullname_ph: "Ex: Seif Eddine Zehaf",
-        phone: "Numéro de Téléphone",
-        phone_ph: "07XX XX XX XX",
-        email: "Adresse E-mail",
-        email_opt: "(Optionnel)",
-        wilaya: "Wilaya",
-        service: "Service Requis",
-        urgency: "Degré d'Urgence",
-        budget: "Budget Estimé",
-        details: "Détails de la demande",
-        details_ph: "Expliquez les détails et spécifications de votre projet...",
-        submit: "Soumettre la demande 🚀",
-        submitting: "Envoi en cours...",
-        services: [
-          "1. Maintenance Hardware & Nettoyage",
-          "2. Maintenance Software (Formatage, OS Windows/Linux)",
-          "3. Installation d'applications & logiciels avec activation",
-          "4. Préparation mémoires & bouhouth (Saisie & Mise en page)",
-          "5. Design Graphique (Logo, flyer, carte de visite, social media)",
-          "6. Vidéo publicitaire sur commande",
-          "7. Développement site web & solutions web",
-          "8. Développement d'applications PC",
-          "9. Autres services..."
-        ],
-        urgencies: [
-          "🟢 Normal (Dans une semaine)",
-          "🟡 Moyen (2 - 3 Jours)",
-          "🔴 Très Urgent (Dès que possible)"
-        ],
-        budgets: [
-          "Non spécifié",
-          "Moins de 10,000 DZD",
-          "10,000 DZD - 50,000 DZD",
-          "50,000 DZD - 150,000 DZD",
-          "Plus de 150,000 DZD"
-        ],
-        succ_title: "Demande envoyée avec succès! ⚡",
-        succ_desc: "Votre demande a été enregistrée. Notre équipe vous contactera très rapidement.",
-        succ_close: "D'accord, nouvelle demande",
-        err_title: "Échec de l'envoi direct",
-        err_desc: "Impossible d'envoyer directement. Transmettez la demande en un clic sur WhatsApp.",
-        wa_btn: "Envoyer via WhatsApp",
-        err_close: "Fermer"
-      },
-      en: {
-        slogan: "Building digital sovereignty with Algerian code 🇩🇿",
-        heading: "Direct Service Request Form",
-        fullname: "Full Name",
-        fullname_ph: "Ex: Seif Eddine Zehaf",
-        phone: "Phone Number",
-        phone_ph: "07XX XX XX XX",
-        email: "Email Address",
-        email_opt: "(Optional)",
-        wilaya: "Wilaya",
-        service: "Required Service",
-        urgency: "Urgency Level",
-        budget: "Estimated Budget",
-        details: "Request Details & Notes",
-        details_ph: "Describe your project requirements and specifics...",
-        submit: "Submit Request Now 🚀",
-        submitting: "Submitting...",
-        services: [
-          "1. Hardware Maintenance & Cleaning",
-          "2. Software Maintenance (Formatting, OS Windows/Linux)",
-          "3. Apps & Software Installation with Activation",
-          "4. Memoirs & Research Prep (Formatting & Printing)",
-          "5. Graphic Design (Logo, flyer, visit card, social media)",
-          "6. Promotional Custom Video Production",
-          "7. Web Development & Cloud Solutions",
-          "8. Desktop PC Applications Development",
-          "9. Other Services..."
-        ],
-        urgencies: [
-          "🟢 Normal (Within 1 week)",
-          "🟡 Medium (Within 2-3 days)",
-          "🔴 Urgent (As soon as possible)"
-        ],
-        budgets: [
-          "Not specified",
-          "Under 10,000 DZD",
-          "10,000 DZD - 50,000 DZD",
-          "50,000 DZD - 150,000 DZD",
-          "Over 150,000 DZD"
-        ],
-        succ_title: "Request Sent Successfully! ⚡",
-        succ_desc: "Your request has been registered in SaivCORE system. We will reach out shortly.",
-        succ_close: "Okay, new request",
-        err_title: "Direct Submission Failed",
-        err_desc: "Could not send automatically. You can forward your order details directly via WhatsApp.",
-        wa_btn: "Send via WhatsApp Now",
-        err_close: "Close"
-      }
-    };
+  const WILAYAS = [
+    '01 - Adrar (أدرار)', '02 - Chlef (الشلف)', '03 - Laghouat (الأغواط)', '04 - Oum El Bouaghi (أم البواقي)',
+    '05 - Batna (باتنة)', '06 - Béjaïa (بجاية)', '07 - Biskra (بسكرة)', '08 - Béchar (بشار)',
+    '09 - Blida (البليدة)', '10 - Bouira (البويرة)', '11 - Tamanrasset (تمنراست)', '12 - Tébessa (تبسة)',
+    '13 - Tlemcen (تلمسان)', '14 - Tiaret (تيارت)', '15 - Tizi Ouzou (تيزي وزو)', '16 - Algiers (الجزائر)',
+    '17 - Djelfa (الجلفة)', '18 - Jijel (جيجل)', '19 - Sétif (سطيف)', '20 - Saïda (سعيدة)',
+    '21 - Skikda (سكيكدة)', '22 - Sidi Bel Abbès (سيدي بلعباس)', '23 - Annaba (عنابة)', '24 - Guelma (قالمة)',
+    '25 - Constantine (قسنطينة)', '26 - Médéa (المدية)', '27 - Mostaganem (مستغانم)', '28 - M\'Sila (المسيلة)',
+    '29 - Mascara (معسكر)', '30 - Ouargla (ورقلة)', '31 - Oran (وهران)', '32 - El Bayadh (البيض)',
+    '33 - Illizi (إليزي)', '34 - Bordj Bou Arréridj (برج بوعريريج)', '35 - Boumerdès (بومرداس)', '36 - El Tarf (الطارف)',
+    '37 - Tindouf (تندوف)', '38 - Tissemsilt (تيسمسيلت)', '39 - El Oued (الوادي)', '40 - Khenchela (خنشلة)',
+    '41 - Souk Ahras (سوق أهراس)', '42 - Tipaza (تيبازة)', '43 - Mila (ميلة)', '44 - Aïn Defla (عين الدفلى)',
+    '45 - Naâma (النعامة)', '46 - Aïn Témouchent (عين تموشنت)', '47 - Ghardaïa (غرداية)', '48 - Relizane (غليزان)',
+    '49 - Timimoun (تيميمون)', '50 - Bordj Badji Mokhtar (برج باجي مختار)', '51 - Ouled Djellal (أولاد جلال)',
+    '52 - Béni Abbès (بني عباس)', '53 - In Salah (عين صالح)', '54 - In Guezzam (عين قزام)',
+    '55 - Touggourt (تقرت)', '56 - Djanet (جانت)', '57 - El M\'Ghair (المغير)', '58 - El Meniaa (المنيعة)',
+  ];
 
-    let currentLang = 'ar';
+  const I18N = {
+    ar: {
+      dir: 'rtl', lang: 'ar', font: "'Cairo', 'Inter', sans-serif",
+      slogan: 'بناء السيادة الرقمية برمز جزائري 🇩🇿',
+      heading: 'نموذج تقديم الطلب المباشر',
+      fullname: 'الاسم واللقب',
+      fullname_ph: 'مثال: سيف الدين زحاف',
+      phone: 'رقم الهاتف',
+      phone_ph: '07XX XX XX XX',
+      email: 'البريد الإلكتروني',
+      email_opt: '(اختياري)',
+      wilaya: 'الولاية',
+      service: 'الخدمة المطلوبة',
+      urgency: 'درجة الاستعجال',
+      budget: 'الميزانية التقديرية',
+      budget_opt: '(اختياري)',
+      details: 'تفاصيل الطلب',
+      details_ph: 'اشرح لنا تفاصيل الخدمة والمواصفات المطلوبة بكل وضوح...',
+      submit: 'إرسال الطلب الآن',
+      submitting: 'جاري الإرسال...',
+      services: [
+        '1. صيانة العتاد والتنظيف (Hardware & Dust Cleaning)',
+        '2. صيانة الأنظمة والفرمتة (Formatage, Windows / Linux OS)',
+        '3. تثبيت وتفعيل البرامج والأنظمة (Software Installation)',
+        '4. إعداد المذكرات والبحوث (تنسيق وطباعة)',
+        '5. التصميم الجرافيكي (Logo, Flyer, Business Card)',
+        '6. إنتاج فيديو إشهاري احترافي',
+        '7. تطوير المواقع والحلول السحابية',
+        '8. تطوير تطبيقات الكمبيوتر (PC Applications)',
+        '9. خدمات وحلول أخرى',
+      ],
+      urgencies: [
+        'عادي (خلال أسبوع)',
+        'متوسط (خلال 2 - 3 أيام)',
+        'عاجل جداً (في أسرع وقت)',
+      ],
+      budgets: [
+        'غير محدد بعد',
+        'أقل من 10,000 دج',
+        '10,000 دج - 50,000 دج',
+        '50,000 دج - 150,000 دج',
+        'أكثر من 150,000 دج',
+      ],
+      succ_title: 'تم إرسال الطلب بنجاح',
+      succ_desc: 'تم تسجيل طلبك في نظام SaivCORE وسنتواصل معك في أقرب وقت.',
+      succ_close: 'تقديم طلب آخر',
+      err_title: 'تعذر الإرسال المباشر',
+      err_desc: 'يمكنك إرسال معطيات طلبك فوراً بضغطة واحدة عبر WhatsApp.',
+      wa_btn: 'إرسال عبر WhatsApp',
+      err_close: 'إلغاء',
+    },
+    fr: {
+      dir: 'ltr', lang: 'fr', font: "'Inter', sans-serif",
+      slogan: 'Bâtir la souveraineté numérique avec du code algérien 🇩🇿',
+      heading: 'Formulaire de Demande de Service',
+      fullname: 'Nom & Prénom',
+      fullname_ph: 'Ex: Seif Eddine Zehaf',
+      phone: 'Numéro de Téléphone',
+      phone_ph: '07XX XX XX XX',
+      email: 'Adresse E-mail',
+      email_opt: '(Optionnel)',
+      wilaya: 'Wilaya',
+      service: 'Service Requis',
+      urgency: 'Degré d\'Urgence',
+      budget: 'Budget Estimé',
+      budget_opt: '(Optionnel)',
+      details: 'Détails de la demande',
+      details_ph: 'Expliquez les détails et spécifications de votre projet...',
+      submit: 'Soumettre la demande',
+      submitting: 'Envoi en cours...',
+      services: [
+        '1. Maintenance Hardware & Nettoyage',
+        '2. Maintenance Software (Formatage, OS Windows/Linux)',
+        '3. Installation d\'applications & logiciels',
+        '4. Préparation mémoires & recherches',
+        '5. Design Graphique (Logo, flyer, carte de visite)',
+        '6. Production vidéo publicitaire',
+        '7. Développement Web & solutions cloud',
+        '8. Développement d\'applications PC',
+        '9. Autres services',
+      ],
+      urgencies: [
+        'Normal (Dans une semaine)',
+        'Moyen (2 - 3 jours)',
+        'Très urgent (Dès que possible)',
+      ],
+      budgets: [
+        'Non spécifié',
+        'Moins de 10,000 DZD',
+        '10,000 - 50,000 DZD',
+        '50,000 - 150,000 DZD',
+        'Plus de 150,000 DZD',
+      ],
+      succ_title: 'Demande envoyée avec succès',
+      succ_desc: 'Votre demande a été enregistrée. Nous vous contacterons très rapidement.',
+      succ_close: 'Nouvelle demande',
+      err_title: 'Échec de l\'envoi direct',
+      err_desc: 'Transmettez votre demande en un clic sur WhatsApp.',
+      wa_btn: 'Envoyer via WhatsApp',
+      err_close: 'Annuler',
+    },
+    en: {
+      dir: 'ltr', lang: 'en', font: "'Inter', sans-serif",
+      slogan: 'Building digital sovereignty with Algerian code 🇩🇿',
+      heading: 'Direct Service Request Form',
+      fullname: 'Full Name',
+      fullname_ph: 'Ex: Seif Eddine Zehaf',
+      phone: 'Phone Number',
+      phone_ph: '07XX XX XX XX',
+      email: 'Email Address',
+      email_opt: '(Optional)',
+      wilaya: 'Wilaya',
+      service: 'Required Service',
+      urgency: 'Urgency Level',
+      budget: 'Estimated Budget',
+      budget_opt: '(Optional)',
+      details: 'Request Details',
+      details_ph: 'Describe your project requirements and specifics...',
+      submit: 'Submit Request',
+      submitting: 'Submitting...',
+      services: [
+        '1. Hardware Maintenance & Cleaning',
+        '2. Software Maintenance (Formatting, OS)',
+        '3. Software Installation & Activation',
+        '4. Memoirs & Research Prep',
+        '5. Graphic Design (Logo, flyer, card)',
+        '6. Promotional Video Production',
+        '7. Web Development & Cloud Solutions',
+        '8. Desktop PC Applications',
+        '9. Other Services',
+      ],
+      urgencies: [
+        'Normal (Within 1 week)',
+        'Medium (2-3 days)',
+        'Urgent (As soon as possible)',
+      ],
+      budgets: [
+        'Not specified',
+        'Under 10,000 DZD',
+        '10,000 - 50,000 DZD',
+        '50,000 - 150,000 DZD',
+        'Over 150,000 DZD',
+      ],
+      succ_title: 'Request Sent Successfully',
+      succ_desc: 'Your request has been registered. We will reach out shortly.',
+      succ_close: 'New request',
+      err_title: 'Direct Submission Failed',
+      err_desc: 'Forward your order details directly via WhatsApp.',
+      wa_btn: 'Send via WhatsApp',
+      err_close: 'Close',
+    },
+  };
 
-    // Generate Unique Ref ID
-    function generateRefCode() {
-      const randomNum = Math.floor(100000 + Math.random() * 900000);
-      const refCode = `SC-${randomNum}`;
-      document.getElementById('ref').value = refCode;
-      document.getElementById('ref-badge').innerText = `REF: ${refCode}`;
-      return refCode;
+  /* =========================================================
+     STATE
+     ========================================================= */
+  const LANG_KEY  = 'saivcore-lang';
+  const THEME_KEY = 'saivcore-theme';
+
+  let currentLang  = localStorage.getItem(LANG_KEY)  || 'ar';
+  let currentTheme = localStorage.getItem(THEME_KEY) || 'dark';
+
+  if (!I18N[currentLang]) currentLang = 'ar';
+
+  const htmlEl = document.documentElement;
+  const body   = document.body;
+
+  const navbar    = document.getElementById('navbar');
+  const themeBtn  = document.getElementById('themeBtn');
+  const themeIcon = document.getElementById('themeIcon');
+
+  /* =========================================================
+     THEME
+     ========================================================= */
+  function applyTheme(theme) {
+    currentTheme = theme;
+    localStorage.setItem(THEME_KEY, theme);
+
+    if (theme === 'dark') {
+      htmlEl.classList.add('dark');
+      if (themeIcon) themeIcon.className = 'fa-solid fa-sun';
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', '#0a0a0a');
+    } else {
+      htmlEl.classList.remove('dark');
+      if (themeIcon) themeIcon.className = 'fa-solid fa-moon';
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', '#ffffff');
     }
+  }
 
-    // Initialize Page Content
-    window.addEventListener('DOMContentLoaded', () => {
-      generateRefCode();
-      populateWilayas();
-      setLanguage('ar');
+  themeBtn.addEventListener('click', function () {
+    applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+  });
+
+  /* =========================================================
+     LANGUAGE
+     ========================================================= */
+  function setLanguage(lang) {
+    const dict = I18N[lang];
+    if (!dict) return;
+
+    currentLang = lang;
+    localStorage.setItem(LANG_KEY, lang);
+
+    htmlEl.setAttribute('lang', dict.lang);
+    htmlEl.setAttribute('dir', dict.dir);
+    body.style.fontFamily = dict.font;
+
+    document.getElementById('lang').value = lang;
+
+    // Active tab
+    document.querySelectorAll('.lang-tab').forEach(function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
 
-    // Populate Wilayas Dropdown
-    function populateWilayas() {
-      const select = document.getElementById('wilaya');
-      select.innerHTML = '';
-      wilayas.forEach((w) => {
-        const opt = document.createElement('option');
-        opt.value = w;
-        opt.textContent = w;
-        select.appendChild(opt);
+    // Slogan
+    document.getElementById('slogan-text').textContent = dict.slogan;
+
+    // Heading
+    document.getElementById('form-heading').innerHTML =
+      '<i class="fa-solid fa-paper-plane"></i><span>' + dict.heading + '</span>';
+
+    // Labels
+    document.getElementById('label-fullname').innerHTML = dict.fullname + ' <span class="required">*</span>';
+    document.getElementById('label-phone').innerHTML = dict.phone + ' <span class="required">*</span>';
+    document.getElementById('label-email').innerHTML = dict.email + ' <span class="optional">' + dict.email_opt + '</span>';
+    document.getElementById('label-wilaya').innerHTML = dict.wilaya + ' <span class="required">*</span>';
+    document.getElementById('label-service').innerHTML = dict.service + ' <span class="required">*</span>';
+    document.getElementById('label-urgency').innerHTML = dict.urgency + ' <span class="required">*</span>';
+    document.getElementById('label-budget').innerHTML = dict.budget + ' <span class="optional">' + dict.budget_opt + '</span>';
+    document.getElementById('label-details').innerHTML = dict.details + ' <span class="required">*</span>';
+
+    // Placeholders
+    document.getElementById('fullname').placeholder = dict.fullname_ph;
+    document.getElementById('phone').placeholder = dict.phone_ph;
+    document.getElementById('details').placeholder = dict.details_ph;
+
+    // Submit button
+    document.getElementById('btn-submit-text').textContent = dict.submit;
+
+    // Services
+    const serviceSel = document.getElementById('service');
+    serviceSel.innerHTML = '';
+    dict.services.forEach(function (s) {
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s;
+      serviceSel.appendChild(opt);
+    });
+
+    // Urgencies
+    const urgencySel = document.getElementById('urgency');
+    urgencySel.innerHTML = '';
+    dict.urgencies.forEach(function (u) {
+      const opt = document.createElement('option');
+      opt.value = u;
+      opt.textContent = u;
+      urgencySel.appendChild(opt);
+    });
+
+    // Budgets
+    const budgetSel = document.getElementById('budget');
+    budgetSel.innerHTML = '';
+    dict.budgets.forEach(function (b) {
+      const opt = document.createElement('option');
+      opt.value = b;
+      opt.textContent = b;
+      budgetSel.appendChild(opt);
+    });
+
+    // Modals
+    document.getElementById('modal-success-title').textContent = dict.succ_title;
+    document.getElementById('modal-success-desc').textContent = dict.succ_desc;
+    document.getElementById('modal-success-close-text').textContent = dict.succ_close;
+
+    document.getElementById('modal-error-title').textContent = dict.err_title;
+    document.getElementById('modal-error-desc').textContent = dict.err_desc;
+    document.getElementById('btn-whatsapp-text').textContent = dict.wa_btn;
+    document.getElementById('modal-error-close-text').textContent = dict.err_close;
+  }
+
+  document.querySelectorAll('.lang-tab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      setLanguage(btn.getAttribute('data-lang'));
+    });
+  });
+
+  /* =========================================================
+     REF CODE
+     ========================================================= */
+  function generateRefCode() {
+    const n = Math.floor(100000 + Math.random() * 900000);
+    const code = 'SC-' + n;
+    document.getElementById('ref').value = code;
+    document.getElementById('ref-value').textContent = code;
+    return code;
+  }
+
+  /* =========================================================
+     POPULATE WILAYAS
+     ========================================================= */
+  function populateWilayas() {
+    const sel = document.getElementById('wilaya');
+    sel.innerHTML = '';
+    WILAYAS.forEach(function (w) {
+      const opt = document.createElement('option');
+      opt.value = w;
+      opt.textContent = w;
+      sel.appendChild(opt);
+    });
+  }
+
+  /* =========================================================
+     FORM SUBMIT
+     ========================================================= */
+  window.handleFormSubmit = async function (e) {
+    e.preventDefault();
+
+    const form = document.getElementById('serviceForm');
+
+    // Native validation
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const btn = document.getElementById('btn-submit');
+    const btnText = document.getElementById('btn-submit-text');
+    const dict = I18N[currentLang];
+
+    btn.disabled = true;
+    btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + dict.submitting;
+
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+    formData.forEach(function (value, key) {
+      params.append(key, value);
+    });
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        body: params,
+      });
+
+      // Always show success if no network error
+      const refCode = document.getElementById('ref').value;
+      document.getElementById('modal-ref-code').textContent = refCode;
+      showModal('successModal');
+    } catch (err) {
+      console.warn('[SaivCORE] Submit error:', err);
+      prepareWhatsAppFallback();
+      showModal('errorModal');
+    } finally {
+      btn.disabled = false;
+      btnText.textContent = dict.submit;
+    }
+  };
+
+  /* =========================================================
+     WHATSAPP FALLBACK
+     ========================================================= */
+  function prepareWhatsAppFallback() {
+    const ref = document.getElementById('ref').value;
+    const fullname = document.getElementById('fullname').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value || '—';
+    const wilaya = document.getElementById('wilaya').value;
+    const service = document.getElementById('service').value;
+    const urgency = document.getElementById('urgency').value;
+    const budget = document.getElementById('budget').value;
+    const details = document.getElementById('details').value;
+
+    const text =
+      '🚀 *طلب خدمة جديد — SaivCORE*\n' +
+      '────────────────────\n' +
+      '📌 *الرقم المرجعي:* ' + ref + '\n' +
+      '👤 *الاسم:* ' + fullname + '\n' +
+      '📞 *الهاتف:* ' + phone + '\n' +
+      '✉️ *الإيميل:* ' + email + '\n' +
+      '📍 *الولاية:* ' + wilaya + '\n' +
+      '🛠️ *الخدمة:* ' + service + '\n' +
+      '🚨 *الاستعجال:* ' + urgency + '\n' +
+      '💰 *الميزانية:* ' + budget + '\n' +
+      '📝 *التفاصيل:*\n' + details;
+
+    document.getElementById('btn-whatsapp-fallback').href =
+      'https://wa.me/213793390349?text=' + encodeURIComponent(text);
+  }
+
+  /* =========================================================
+     MODAL HELPERS
+     ========================================================= */
+  window.showModal = function (id) {
+    document.getElementById(id).classList.add('open');
+  };
+  window.closeModal = function (id) {
+    document.getElementById(id).classList.remove('open');
+  };
+  window.resetForm = function () {
+    document.getElementById('serviceForm').reset();
+    generateRefCode();
+    setLanguage(currentLang);
+  };
+
+  // Close modals on backdrop click
+  document.querySelectorAll('.modal').forEach(function (modal) {
+    modal.addEventListener('click', function (e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+  });
+
+  // ESC key
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal.open').forEach(function (m) {
+        m.classList.remove('open');
       });
     }
+  });
 
-    // Switch Language
-    function setLanguage(lang) {
-      currentLang = lang;
-      document.getElementById('lang').value = lang;
+  /* =========================================================
+     NAVBAR SCROLL
+     ========================================================= */
+  function onScroll() {
+    navbar.classList.toggle('scrolled', window.scrollY > 10);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-      // Update HTML Dir
-      if (lang === 'ar') {
-        document.documentElement.dir = 'rtl';
-        document.documentElement.lang = 'ar';
-      } else {
-        document.documentElement.dir = 'ltr';
-        document.documentElement.lang = lang;
-      }
+  /* =========================================================
+     YEAR
+     ========================================================= */
+  const y = document.getElementById('year');
+  if (y) y.textContent = new Date().getFullYear();
 
-      // Update Active Button Style
-      ['ar', 'fr', 'en'].forEach(l => {
-        const btn = document.getElementById(`btn-lang-${l}`);
-        if (l === lang) {
-          btn.className = "px-3 py-1.5 rounded-xl transition-all duration-200 bg-sky-600 text-white shadow-md font-bold";
-        } else {
-          btn.className = "px-3 py-1.5 rounded-xl transition-all duration-200 text-slate-400 hover:text-white";
-        }
-      });
+  /* =========================================================
+     BOOT
+     ========================================================= */
+  function boot() {
+    applyTheme(currentTheme);
+    populateWilayas();
+    generateRefCode();
+    setLanguage(currentLang);
+  }
 
-      // Update Labels & Text
-      const t = i18n[lang];
-      document.getElementById('slogan-text').innerText = t.slogan;
-      document.getElementById('form-heading').innerHTML = `<i class="fa-solid fa-paper-plane text-sky-400"></i> ${t.heading}`;
-      
-      document.getElementById('label-fullname').innerHTML = `${t.fullname} <span class="text-rose-400">*</span>`;
-      document.getElementById('fullname').placeholder = t.fullname_ph;
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
 
-      document.getElementById('label-phone').innerHTML = `${t.phone} <span class="text-rose-400">*</span>`;
-      document.getElementById('phone').placeholder = t.phone_ph;
+})();
+</script>
 
-      document.getElementById('label-email').innerHTML = `${t.email} <span class="text-slate-500 text-xs">${t.email_opt}</span>`;
-      
-      document.getElementById('label-wilaya').innerHTML = `${t.wilaya} <span class="text-rose-400">*</span>`;
-      document.getElementById('label-service').innerHTML = `${t.service} <span class="text-rose-400">*</span>`;
-      document.getElementById('label-urgency').innerHTML = `${t.urgency} <span class="text-rose-400">*</span>`;
-      document.getElementById('label-budget').innerHTML = `${t.budget} <span class="text-slate-500 text-xs">${t.email_opt}</span>`;
-      
-      document.getElementById('label-details').innerHTML = `${t.details} <span class="text-rose-400">*</span>`;
-      document.getElementById('details').placeholder = t.details_ph;
-
-      document.getElementById('btn-submit-text').innerText = t.submit;
-
-      // Populate Services Dropdown
-      const serviceSelect = document.getElementById('service');
-      serviceSelect.innerHTML = '';
-      t.services.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s;
-        opt.textContent = s;
-        serviceSelect.appendChild(opt);
-      });
-
-      // Populate Urgency Dropdown
-      const urgencySelect = document.getElementById('urgency');
-      urgencySelect.innerHTML = '';
-      t.urgencies.forEach(u => {
-        const opt = document.createElement('option');
-        opt.value = u;
-        opt.textContent = u;
-        urgencySelect.appendChild(opt);
-      });
-
-      // Populate Budget Dropdown
-      const budgetSelect = document.getElementById('budget');
-      budgetSelect.innerHTML = '';
-      t.budgets.forEach(b => {
-        const opt = document.createElement('option');
-        opt.value = b;
-        opt.textContent = b;
-        budgetSelect.appendChild(opt);
-      });
-
-      // Update Modal Texts
-      document.getElementById('modal-success-title').innerText = t.succ_title;
-      document.getElementById('modal-success-desc').innerText = t.succ_desc;
-      document.getElementById('modal-success-close').innerText = t.succ_close;
-
-      document.getElementById('modal-error-title').innerText = t.err_title;
-      document.getElementById('modal-error-desc').innerText = t.err_desc;
-      document.getElementById('btn-whatsapp-text').innerText = t.wa_btn;
-      document.getElementById('modal-error-close').innerText = t.err_close;
-    }
-
-    // Handle Form Submit
-    async function handleFormSubmit(e) {
-      e.preventDefault();
-
-      const form = document.getElementById('serviceForm');
-      const btn = document.getElementById('btn-submit');
-      const btnText = document.getElementById('btn-submit-text');
-      const originalText = i18n[currentLang].submit;
-
-      // Loading state
-      btn.disabled = true;
-      btn.classList.add('opacity-80', 'cursor-not-allowed');
-      btnText.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${i18n[currentLang].submitting}`;
-
-      const formData = new FormData(form);
-      const params = new URLSearchParams();
-
-      // Ensure every parameter is set explicitly
-      for (const [key, value] of formData.entries()) {
-        params.append(key, value);
-      }
-
-      try {
-        // Send request with standard application/x-www-form-urlencoded
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-          },
-          body: params
-        });
-
-        // Show Success Modal regardless of CORS limitations if call succeeds
-        const refCode = document.getElementById('ref').value;
-        document.getElementById('modal-ref-code').innerText = refCode;
-        showModal('successModal');
-
-      } catch (err) {
-        console.warn('Backend submit notice/error:', err);
-        
-        // Prepare WhatsApp Fallback URL with complete payload
-        prepareWhatsAppFallback();
-        showModal('errorModal');
-      } finally {
-        btn.disabled = false;
-        btn.classList.remove('opacity-80', 'cursor-not-allowed');
-        btnText.innerHTML = originalText;
-      }
-    }
-
-    // Generate WhatsApp Fallback Message
-    function prepareWhatsAppFallback() {
-      const ref = document.getElementById('ref').value;
-      const fullname = document.getElementById('fullname').value;
-      const phone = document.getElementById('phone').value;
-      const email = document.getElementById('email').value || 'غير محدد';
-      const wilaya = document.getElementById('wilaya').value;
-      const service = document.getElementById('service').value;
-      const urgency = document.getElementById('urgency').value;
-      const budget = document.getElementById('budget').value;
-      const details = document.getElementById('details').value;
-
-      const waText = `🚀 *طلب خدمة جديد - SaivCORE*
-----------------------------------
-📌 *الرقم المرجعي:* ${ref}
-👤 *الاسم:* ${fullname}
-📞 *الهاتف:* ${phone}
-✉️ *الإيميل:* ${email}
-📍 *الولاية:* ${wilaya}
-🛠️ *الخدمة:* ${service}
-🚨 *الاستعجال:* ${urgency}
-💰 *الميزانية:* ${budget}
-📝 *التفاصيل:*
-${details}`;
-
-      const waUrl = `https://wa.me/213793390349?text=${encodeURIComponent(waText)}`;
-      document.getElementById('btn-whatsapp-fallback').href = waUrl;
-    }
-
-    // Modal Utilities
-    function showModal(id) {
-      document.getElementById(id).classList.remove('hidden');
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.add('hidden');
-    }
-
-    function resetForm() {
-      document.getElementById('serviceForm').reset();
-      generateRefCode();
-      setLanguage(currentLang);
-    }
-  </script>
 </body>
 </html>
